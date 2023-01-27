@@ -1,0 +1,79 @@
+{% extends "mail/layout2.html" %}
+{% load static %}
+
+
+
+{% block title %}
+    Email Detail
+{% endblock %}
+
+{% block body %}
+
+    <div class="container w-75  p-3">
+        <div id="top-emails-bar" class="mb-4">
+            <a class="link-dark ml-n2" href="{% url 'index' %}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"/>
+                </svg>
+            </a>
+            
+            <span class="fs-3 fw-bold"> &nbsp;{{ email.subject }}</span>
+        </div>
+        
+
+        <div class="d-flex mb-5">
+            <div class="d-flex flex-column">
+                <p class="mb-0 fs-5 fw-bold">{{ email.user.username }}&nbsp;<span class="fs-6 fw-light">&lt;{{ email.sender.email}}&gt;</span></p>
+                <div class="fw-light">to 
+                    {% with email.recipients_list|length as len %}
+                    {% if len > 1 %}
+                       {% for email in email.recipients_list %} 
+                            {% if not forloop.last %}
+                                 {{ email }}&#44;
+                            {% else %}
+                                {{ email }}
+                            {% endif %}
+                        {% endfor %}
+
+                    {% else %}
+                        {{ email.recipients_list.0 }} 
+                    {% endif %}
+
+                    {% endwith %}
+
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                        <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                      </svg> 
+                </div>
+            </div>
+            <div class="ms-auto fw-light">
+                {{ email.timestamp }}
+            </div>
+        </div>
+        <div>
+            {{ email.body | linebreaks }}
+        </div>
+        <br>
+        <div>
+            <button class="btn btn-outline-primary">
+                <span class="align-top">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-reply" viewBox="0 0 16 16">
+                        <path d="M6.598 5.013a.144.144 0 0 1 .202.134V6.3a.5.5 0 0 0 .5.5c.667 0 2.013.005 3.3.822.984.624 1.99 1.76 2.595 3.876-1.02-.983-2.185-1.516-3.205-1.799a8.74 8.74 0 0 0-1.921-.306 7.404 7.404 0 0 0-.798.008h-.013l-.005.001h-.001L7.3 9.9l-.05-.498a.5.5 0 0 0-.45.498v1.153c0 .108-.11.176-.202.134L2.614 8.254a.503.503 0 0 0-.042-.028.147.147 0 0 1 0-.252.499.499 0 0 0 .042-.028l3.984-2.933zM7.8 10.386c.068 0 .143.003.223.006.434.02 1.034.086 1.7.271 1.326.368 2.896 1.202 3.94 3.08a.5.5 0 0 0 .933-.305c-.464-3.71-1.886-5.662-3.46-6.66-1.245-.79-2.527-.942-3.336-.971v-.66a1.144 1.144 0 0 0-1.767-.96l-3.994 2.94a1.147 1.147 0 0 0 0 1.946l3.994 2.94a1.144 1.144 0 0 0 1.767-.96v-.667z"/>
+                      </svg>
+                </span>
+                
+                Reply
+            </button>&nbsp;
+            <button class="btn btn-outline-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-forward" viewBox="0 0 16 16">
+                    <path d="M9.502 5.513a.144.144 0 0 0-.202.134V6.65a.5.5 0 0 1-.5.5H2.5v2.9h6.3a.5.5 0 0 1 .5.5v1.003c0 .108.11.176.202.134l3.984-2.933a.51.51 0 0 1 .042-.028.147.147 0 0 0 0-.252.51.51 0 0 1-.042-.028L9.502 5.513zM8.3 5.647a1.144 1.144 0 0 1 1.767-.96l3.994 2.94a1.147 1.147 0 0 1 0 1.946l-3.994 2.94a1.144 1.144 0 0 1-1.767-.96v-.503H2a.5.5 0 0 1-.5-.5v-3.9a.5.5 0 0 1 .5-.5h6.3v-.503z"/>
+                </svg>
+                Forward</button>
+        </div>
+        
+        <br>
+
+
+    </div>
+
+{% endblock %}

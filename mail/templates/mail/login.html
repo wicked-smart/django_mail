@@ -1,0 +1,70 @@
+{% extends "mail/layout.html" %}
+
+{% load static %}
+
+{% block title %}
+    Email | Login Page
+{% endblock %}
+
+{% block stylesheet %}
+    <style>
+        body{
+            margin: 0;
+            
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+   <div class="container mt-3 bg-blue">
+
+    <div class="text-center"> 
+        <img src="{% static  'mail/img/gmail.png' %}" alt="email-logo" height="150" width="150">
+    </div>
+    
+    
+    <div class="container w-50 mt-5 p-1 d-flex flex-column align-items-center">
+
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+
+            <h3>Login to your Email</h3>
+
+            <div class="my-3">
+        
+            <div class="form-group mb-3">
+                <label for="emailid" class="form-label">Email address :- </label>
+                <input type="email" id="emailid" name="email" class="form-control" placeholder="Email"> 
+                {% if login_error %}
+                    <small class="form-text"><span class="text-danger">{{ login_error }}</span></small>
+                {% endif %}
+
+             </div>
+        
+
+         <div class="form-group mb-3">
+               <label for="password" class="form-label">Password :- </label>
+               <input type="password" name="password" class="form-control" placeholder="password">
+         </div>
+
+         <div class="d-grid col-12">
+             <button type="submit" class="btn btn-primary  px-3">Login</button>
+         </div>
+        
+        </form>
+        
+        
+
+
+        <div class="text-center mt-3">
+            New User? 
+            <a class="p-1" href="{% url 'register' %}">Sign Up</a>
+        </div>
+  
+
+    </div>
+
+   </div>
+    
+{% endblock %}
