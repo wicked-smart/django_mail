@@ -1,0 +1,47 @@
+{% extends 'mail/layout2.html' %}
+{% load static %}
+
+{% block title %}
+    Sent&nbsp;({{ emails_count }}) -{{request.user.email}}
+{% endblock %}
+
+{% block body %}
+    <h2 class="text-center mt-3 text-success">Sent</h2>
+
+  
+    <!-- sent emails -->
+    <div class="container mt-3">
+        <table class="table p-3  table-hover text-nowrap">
+            <tbody>
+                {% for email in emails %}
+                    <tr>
+                        <td>
+                            To:&nbsp; 
+                            {% with email.recipients_email_list|length as len  %}
+                                {% if len > 1%}
+                                    {{ email.recipients_email_list.0|truncatechars:8 }}
+                                {% else %}
+                                    {{ email.recipients_email_list.0 }}
+                                {% endif %}
+
+                            {% endwith %}
+                            
+                        </td>
+                        <td>
+                            {% if not email.read %}
+                                <a href="{% url 'email' email.id %}" style="font-family: 'Open-sans', sans-serif; font-weight:300;"  class="link-primary">{{ email.subject | capfirst }} -- &nbsp;&nbsp;<span >{{ email.body | truncatewords:15 }}</span></a>
+                            {% else %}
+                                <a href="{% url 'email' email.id %}" style="font-family: 'Open-sans', sans-serif; font-weight:200;"  class="link-primary">{{ email.subject | capfirst }} -- &nbsp;&nbsp;<span>{{ email.body | truncatewords:15 }}</span></a>
+                            {% endif %}
+                        </td>
+                        <td>{{ email.timestamp }}</td>
+                        
+                    </tr>
+                {% endfor %}
+            </tbody>
+            
+        </table>
+        
+    </div>
+
+{% endblock %}

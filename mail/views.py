@@ -3,9 +3,11 @@ from django.http import HttpResponse, HttpResponseRedirect
 from .models import *
 from django.db import IntegrityError
 from django.contrib.auth import authenticate, login, logout
-from django.urls import reverse
+from django.urls import reverse, resolve 
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from urllib.parse import urlparse
+from pathlib import PurePath
 
 # Create your views here.
 
@@ -98,10 +100,35 @@ def email(request, mail_id):
     Email.objects.filter(id=mail_id).update(read=True)
     email = Email.objects.get(pk=mail_id)
 
+    
+    # extract referer from http headers and pass the view name to the template file
+    try:
+        referrer = request.META['HTTP_REFERER']
+        url_path = urlparse(referrer).path
+        print(resolve(url_path).url_name)
+        view_name = resolve(url_path).view_name
+    
+    except KeyError:
+        return HttpResponseRedirect(reverse('index'))
+
+
+
+    #print email referrer
     return render(request, "mail/email_detail.html",
     {
-        "email": email
+        "email": email,
+        "redirect_view_name": view_name
     })
 
+
+def emails_sent(request):
+    
+    emails = Email.objects.filter(sender=request.user)
+
+    return render(request, "mail/sent_emails.html", {
+        "emails": emails,
+        "emails_count": emails.count()
+    })
+    
 
 

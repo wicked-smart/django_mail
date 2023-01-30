@@ -21,7 +21,7 @@ class Email(models.Model):
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name} <{self.user.email}>"
     
-    def recipients_list(self):
+    def recipients_email_list(self):
         return [user.email for user in self.recipients.all()]
 
     def serialize(self):
