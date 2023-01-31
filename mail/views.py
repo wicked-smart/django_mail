@@ -22,7 +22,7 @@ def index(request):
             "emails_count": emails.count()
          })
     else:
-        return HttpResponseRedirect(revers("login"))
+        return HttpResponseRedirect(reverse("login"))
 
 
 #register
@@ -65,7 +65,7 @@ def register_view(request):
 
 #login to your email
 def login_view(request):
-    if request.method == "GET":
+    if request.metho == "GET":
         return render(request, "mail/login.html")
     else:
         email = request.POST.get("email")
