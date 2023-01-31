@@ -1,0 +1,1 @@
+web: python3 manage.py makemigrations && python3 manage.py migrate && gunicorn project3_cs50.wsgi
