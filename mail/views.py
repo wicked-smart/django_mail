@@ -22,7 +22,7 @@ def index(request):
             "emails_count": emails.count()
          })
     else:
-        return HttpResponseRedirect(reverse("login"))
+        return HttpResponseRedirect(revers("login"))
 
 
 #register
