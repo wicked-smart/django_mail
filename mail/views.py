@@ -65,7 +65,7 @@ def register_view(request):
 
 #login to your email
 def login_view(request):
-    if request.metho == "GET":
+    if request.method == "GET":
         return render(request, "mail/login.html")
     else:
         email = request.POST.get("email")
@@ -131,4 +131,91 @@ def emails_sent(request):
     })
     
 
+def compose(request):
 
+    if request.method == "GET":
+        return render(request, "mail/compose.html",
+            {
+                "purpose": "compose"
+            }
+        )
+    else:
+        recipients = request.POST.get("recipients")
+        subject = request.POST.get("subject")
+        body = request.POST.get("body")
+
+        if recipients == None or subject == None or body == None:
+            return render(request, "mail/compose.html", {
+                "purpose": "compose",
+                "message": "some fields are missing "
+                })
+        else:
+
+            # make a valid email address list of recipients objects
+            valid_recipients = []
+            recipients = recipients.split(", ")
+
+            for recipient in recipients:
+                try:
+                    user = User.objects.filter(email=recipient)
+                    valid_recipients.append(user[0])
+                
+                except:
+                    pass
+            
+            email = Email.objects.create(user=request.user, sender=request.user)
+            email.subject = subject
+            email.body= body
+
+            #add all recipients 
+            for valid_recipient in valid_recipients:
+                email.recipients.add(valid_recipient)
+            
+            email.save()
+
+            return HttpResponseRedirect(reverse("index"))
+
+
+#function to forward your  email id
+def forward(request, email_id):
+
+    #get the email 
+    email = Email.objects.get(id=email_id)
+
+    if request.method == "GET":
+        return render(request, "mail/compose.html",
+        {
+           "purpose": "forward",
+           "email": email
+        })
+    
+    else:
+        
+        subject = request.POST.get("subject")
+        recipients = request.POST.get("recipients")
+        body = request.POST.get("body")
+
+        #find valid list 
+        valid_recipients = []
+        recipients = recipients.split(", ")
+
+        for recipient in recipients:
+            try:
+                user = User.objects.filter(email=recipient)
+                valid_recipients.append(user[0])
+                
+            except:
+                pass
+
+        # check for invalid or empty fields
+        
+        new_email = Email.objects.create(user=request.user, sender=request.user)
+
+        new_email.subject = subject
+        new_email.body = body
+        
+        for recipient in valid_recipients:
+            new_email.recipients.add(recipient)
+        
+        new_email.save()
+        return HttpResponseRedirect(reverse("index"))
