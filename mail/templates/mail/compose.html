@@ -1,0 +1,95 @@
+{% extends "mail/layout2.html" %}
+{% load static %}
+
+{% block title %}
+    compose
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+{% endblock %}
+
+{% block body %}
+{% if purpose == "compose" %}
+
+    <h2 class="text-center text-success mt-2">Compose</h2>
+    {% if message %}
+         <h3>{{ message }}</h3>
+    {% endif %}
+
+    <div class="container mt-4 w-50">
+        <form action="{% url 'compose' %}" method="post" class="mt-3">
+            {% csrf_token %}
+            <div class="mb-3">
+                <input class="form-control" type="text" value="New Email" aria-label="readonly input example" disabled readonly>
+                
+            </div>
+            <div class="mb-3">
+                <input type="text" placeholder="Recipients" name="recipients" class="form-control">
+                <div class="form-text">
+                   Enter valid comma-space seperated email addresses 
+                </div>
+            </div>
+            <div class="mb-3">
+                <input type="text" placeholder="Subject" name="subject" class="form-control">
+            </div>
+            
+            <div class="mb-3">
+                <textarea class="form-control" name="body" rows="8"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+                    <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
+                </svg>
+                send</button>
+        </form>
+    </div>
+{% elif purpose == "forward" %}
+
+        <h2 class="text-center text-success mt-2">Forward</h2>
+        <div class="container mt-4 w-50">
+            <form action="{% url 'forward' email.id  %}" method="post" class="mt-3">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <input type="text" placeholder="Recipients" name="recipients" class="form-control">
+                    <div class="form-text">
+                       Enter valid comma-space seperated email addresses 
+                    </div>
+                </div>
+                <div class="mb-3">
+                    {% if "Fwd: " in email.subject %}
+                         <input type="text" value="{{ email.subject }}" name="subject" class="form-control">
+                    {% else %}
+                        <input type="text" value="Fwd: {{ email.subject }}" name="subject" class="form-control">
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                    <textarea class="form-control" name="body" rows="8">
+                   
+                        ----------------Forwarded message------------
+                    From: {{ email.user.username }} <{{ email.sender.email }}>
+                    Date: {{ email.timestamp }}
+                    Subject: {{ email.subject }}
+                   
+                    {{ email.body }}
+                    
+
+                    </textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+                        <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
+                    </svg>
+                    send</button>
+            </form>
+
+{% elif purpose == "reply" %}
+            <h1>Welcome to the reply page!</h1>
+
+{% endif %}
+    
+{% endblock %}
