@@ -9,6 +9,43 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 {% endblock %}
 
+{% block script %}
+<script>
+    // insert value of fake textarea to the hidden input value
+document.addEventListener('DOMContentLoaded', function(){
+    
+    //handle the fake textarea
+    document.querySelector("#forward").onsubmit = () => {
+        document.querySelector("#fake_textarea_content").value = document.querySelector("#fake_textarea").innerHTML;
+    }
+
+    //handle the fowarded div
+    var bar = document.querySelector("#forwarded");
+
+            if(bar != null)
+            {
+                const htmlStr = bar.innerText;
+                console.log(htmlStr);
+
+                const parser = new DOMParser();
+                const doc  = parser.parseFromString(htmlStr, "text/html");
+
+                console.log(doc.body.innerHTML);
+
+                bar.innerHTML = doc.body.innerHTML;
+
+                
+
+            }
+
+})
+</script>
+
+
+{% endblock %}
+
+
+
 {% block body %}
 {% if purpose == "compose" %}
 
@@ -49,7 +86,7 @@
 
         <h2 class="text-center text-success mt-2">Forward</h2>
         <div class="container mt-4 w-50">
-            <form action="{% url 'forward' email.id  %}" method="post" class="mt-3">
+            <form id="forward" action="{% url 'forward' email.id  %}" method="post" class="mt-3">
                 {% csrf_token %}
                 
                 <div class="mb-3">
@@ -65,19 +102,27 @@
                         <input type="text" value="Fwd: {{ email.subject }}" name="subject" class="form-control">
                     {% endif %}
                 </div>
-                
-                <div class="mb-3">
-                    <textarea class="form-control" name="body" rows="8">
-                   
-                        ----------------Forwarded message------------
-                    From: {{ email.user.username }} <{{ email.sender.email }}>
-                    Date: {{ email.timestamp }}
-                    Subject: {{ email.subject }}
-                   
-                    {{ email.body }}
+                <input id="fake_textarea_content" type="hidden" name="body">
+                <div id="fake_textarea" contenteditable="true" class="form-control mb-3 p-3 overflow-auto">  
+                          
+<br><br>
+            ----------------Forwarded message------------<br>
+            From: <b>{{ email.user.username }}</b> &lt;{{ email.sender.email }}&gt;<br>
+            Date: {{ email.timestamp }}<br>
+            Subject: {{ email.subject }}<br><br>
+            
+            <!-- if Fwd in subject do this else, just -->
+            {% if "Fwd: " in email.subject %}
+                <div id="forwarded">
+                     {{ email.body}}
+                </div>
+            {% else %}
+                    {{ email.body|linebreaks }}
+            {% endif %}
+            
                     
-
-                    </textarea>
+                    <br>
+                   
                 </div>
                 
                 <button type="submit" class="btn btn-primary">

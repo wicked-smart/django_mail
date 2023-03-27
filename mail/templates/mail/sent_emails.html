@@ -1,5 +1,6 @@
 {% extends 'mail/layout2.html' %}
 {% load static %}
+{% load remove_tags %}
 
 {% block title %}
     Sent&nbsp;({{ emails_count }}) -{{request.user.email}}
@@ -28,11 +29,7 @@
                             
                         </td>
                         <td>
-                            {% if not email.read %}
-                                <a href="{% url 'email' email.id %}" style="font-family: 'Open-sans', sans-serif; font-weight:300;"  class="link-primary">{{ email.subject | capfirst }} -- &nbsp;&nbsp;<span >{{ email.body | truncatewords:15 }}</span></a>
-                            {% else %}
-                                <a href="{% url 'email' email.id %}" style="font-family: 'Open-sans', sans-serif; font-weight:200;"  class="link-primary">{{ email.subject | capfirst }} -- &nbsp;&nbsp;<span>{{ email.body | truncatewords:15 }}</span></a>
-                            {% endif %}
+                            <a href="{% url 'email' email.id %}" style="font-family: 'Open-sans', sans-serif; font-weight:300;"  class="link-primary">{{ email.subject | capfirst }} -- &nbsp;&nbsp;<span >{{ email.body | remove_tags | truncatewords:10 }}</span></a>
                         </td>
                         <td>{{ email.timestamp }}</td>
                         

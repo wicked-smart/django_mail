@@ -7,6 +7,32 @@
     Email Detail
 {% endblock %}
 
+{% block script %}
+
+<script>
+        document.addEventListener('DOMContentLoaded', function(){
+            var bar = document.querySelector("#forwarded");
+
+            if(bar != null)
+            {
+                const htmlStr = bar.innerText;
+                console.log(htmlStr);
+
+                const parser = new DOMParser();
+                const doc  = parser.parseFromString(htmlStr, "text/html");
+
+                console.log(doc.body.innerHTML);
+
+                bar.innerHTML = doc.body.innerHTML;
+
+                
+
+            }
+
+        })
+</script>
+{% endblock %}
+
 {% block body %}
 
     <div class="container w-75  p-3">
@@ -54,9 +80,19 @@
                 {{ email.timestamp }}
             </div>
         </div>
-        <div>
-            {{ email.body | linebreaks }}
-        </div>
+
+        {% with email.subject|slice:":5" as foo %}
+            {% if foo == "Fwd: " %}
+                <div id="forwarded">
+                    {{ email.body }}
+                </div>
+            {% else %}
+                <div>
+                    {{ email.body | linebreaks }}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
         <br>
         <div>
             <a class="btn btn-outline-primary" href="#" role="button">

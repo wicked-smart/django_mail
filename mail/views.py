@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from urllib.parse import urlparse
 from pathlib import PurePath
+import re
 
 # Create your views here.
 
@@ -144,6 +145,8 @@ def compose(request):
         subject = request.POST.get("subject")
         body = request.POST.get("body")
 
+        print(body)
+
         if recipients == None or subject == None or body == None:
             return render(request, "mail/compose.html", {
                 "purpose": "compose",
@@ -195,6 +198,13 @@ def forward(request, email_id):
         recipients = request.POST.get("recipients")
         body = request.POST.get("body")
 
+        x = re.sub("<[^<]+?>",'',body)
+
+        print(type(body))
+
+        print(body)
+        print(x)
+
         #find valid list 
         valid_recipients = []
         recipients = recipients.split(", ")
@@ -213,7 +223,7 @@ def forward(request, email_id):
 
         new_email.subject = subject
         new_email.body = body
-        
+
         for recipient in valid_recipients:
             new_email.recipients.add(recipient)
         
