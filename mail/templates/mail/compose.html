@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
         <h2 class="text-center text-success mt-2">Forward</h2>
         <div class="container mt-4 w-50">
-            <form id="forward" action="{% url 'forward' email.id  %}" method="post" class="mt-3">
+            <form action="{% url 'forward' email.id  %}" method="post" class="mt-3">
                 {% csrf_token %}
                 
                 <div class="mb-3">

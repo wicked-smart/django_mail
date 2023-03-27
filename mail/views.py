@@ -145,8 +145,6 @@ def compose(request):
         subject = request.POST.get("subject")
         body = request.POST.get("body")
 
-        print(body)
-
         if recipients == None or subject == None or body == None:
             return render(request, "mail/compose.html", {
                 "purpose": "compose",
@@ -224,6 +222,7 @@ def forward(request, email_id):
         new_email.subject = subject
         new_email.body = body
 
+        
         for recipient in valid_recipients:
             new_email.recipients.add(recipient)
         
