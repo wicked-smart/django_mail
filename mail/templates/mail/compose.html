@@ -7,41 +7,7 @@
 
 {% block head %}
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
-{% endblock %}
-
-{% block script %}
-<script>
-    // insert value of fake textarea to the hidden input value
-document.addEventListener('DOMContentLoaded', function(){
-    
-    //handle the fake textarea
-    document.querySelector("#forward").onsubmit = () => {
-        document.querySelector("#fake_textarea_content").value = document.querySelector("#fake_textarea").innerHTML;
-    }
-
-    //handle the fowarded div
-    var bar = document.querySelector("#forwarded");
-
-            if(bar != null)
-            {
-                const htmlStr = bar.innerText;
-                console.log(htmlStr);
-
-                const parser = new DOMParser();
-                const doc  = parser.parseFromString(htmlStr, "text/html");
-
-                console.log(doc.body.innerHTML);
-
-                bar.innerHTML = doc.body.innerHTML;
-
-                
-
-            }
-
-})
-</script>
-
-
+    <link href="{% static 'mail/css/index.css'%}" rel="stylesheet">
 {% endblock %}
 
 
@@ -50,9 +16,7 @@ document.addEventListener('DOMContentLoaded', function(){
 {% if purpose == "compose" %}
 
     <h2 class="text-center text-success mt-2">Compose</h2>
-    {% if message %}
-         <h3>{{ message }}</h3>
-    {% endif %}
+
 
     <div class="container mt-4 w-50">
         <form action="{% url 'compose' %}" method="post" class="mt-3">
@@ -63,14 +27,21 @@ document.addEventListener('DOMContentLoaded', function(){
             </div>
             <div class="mb-3">
                 <input type="text" placeholder="Recipients" name="recipients" class="form-control">
+                {% if recipients_error_message %}
+                <small  class="form-text text-muted">{{ recipients_error_message }}</small> 
+                {% else %} 
                 <div class="form-text">
                    Enter valid comma-space seperated email addresses 
                 </div>
+                {% endif %}
             </div>
             <div class="mb-3">
                 <input type="text" placeholder="Subject" name="subject" class="form-control">
             </div>
-            
+            {% if subject_error_message %}
+                <small  class="form-text text-muted">{{ subject_error_message }}</small> 
+            {% endif %}
+
             <div class="mb-3">
                 <textarea class="form-control" name="body" rows="8"></textarea>
             </div>
@@ -86,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
         <h2 class="text-center text-success mt-2">Forward</h2>
         <div class="container mt-4 w-50">
-            <form action="{% url 'forward' email.id  %}" method="post" class="mt-3">
+            <form id="forward" action="{% url 'forward' email.id  %}" method="post" class="mt-3">
                 {% csrf_token %}
                 
                 <div class="mb-3">
@@ -106,19 +77,7 @@ document.addEventListener('DOMContentLoaded', function(){
                 <div id="fake_textarea" contenteditable="true" class="form-control mb-3 p-3 overflow-auto">  
                           
 <br><br>
-            ----------------Forwarded message------------<br>
-            From: <b>{{ email.user.username }}</b> &lt;{{ email.sender.email }}&gt;<br>
-            Date: {{ email.timestamp }}<br>
-            Subject: {{ email.subject }}<br><br>
-            
-            <!-- if Fwd in subject do this else, just -->
-            {% if "Fwd: " in email.subject %}
-                <div id="forwarded">
-                     {{ email.body}}
-                </div>
-            {% else %}
-                    {{ email.body|linebreaks }}
-            {% endif %}
+                    {{ forwarded_message|safe }} 
             
                     
                     <br>
@@ -129,12 +88,151 @@ document.addEventListener('DOMContentLoaded', function(){
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
                         <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
                     </svg>
-                    send</button>
+                    send
+                </button>
             </form>
 
 {% elif purpose == "reply" %}
-            <h1>Welcome to the reply page!</h1>
+
+            <h2 class="text-center text-success-mt-2">reply</h1>
+            <div class="container mt-4 w-50">
+                <form id="reply" action="{% url 'reply' email.id  %}" method="post" class="mt-3">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <input type="text" value="To: {{ email.sender.email }}" name="recipients" class="form-control">
+                        <div class="form-text">
+                           Enter valid comma-space seperated email addresses 
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {% if "Re: " in email.subject %}
+                             <input type="text" value="{{ email.subject }}" name="subject" class="form-control">
+                        {% elif email.subject|slice:":5" == "Fwd: " %}
+                            <input type="text" value="Re: {{ email.subject|slice:'5:' }}" name="subject" class="form-control">
+                        {% else %}
+                            <input type="text" value="Re: {{ email.subject }}" name="subject" class="form-control">
+                        {% endif %}
+                    </div>
+                    <input id="fake_text_area_content" type="hidden" name="reply">
+                    <div id="fake_text_area" contenteditable="true" class="form-control mb-3 p-3 overflow-auto">  
+                              
+    <br><br>
+                    </div>
+                    {% if message %}
+                         <small  class="form-text text-muted"style="color: red !important;">{{ message }}</small> 
+                         <br>
+                         <br>
+                    {% endif %}
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+                            <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
+                        </svg>
+                        reply
+                    </button>
+                </form>
+               
+            </div>
+
+            {% elif purpose == "reply all" %}
+
+            <h2 class="text-center text-success-mt-2">reply all</h1>
+            <div class="container mt-4 w-50">
+                <form id="reply_all" action="{% url 'reply_all' email.id  %}" method="post" class="mt-3">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <input type="text" value="To: {{ email.recipients_email_list|join:', ' }}" name="recipients" class="form-control">
+                        <div class="form-text">
+                           Enter valid comma-space seperated email addresses 
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {% if "Re: " in email.subject %}
+                             <input type="text" value="{{ email.subject }}" name="subject" class="form-control">
+                        {% else %}
+                            <input type="text" value="Re: {{ email.subject }}" name="subject" class="form-control">
+                        {% endif %}
+                    </div>
+                    <input id="fake_text_area_content" type="hidden" name="reply_all">
+                    <div id="fake_text_area" contenteditable="true" class="form-control mb-3 p-3 overflow-auto">  
+                              
+    <br><br>
+                    </div>
+                    {% if message %}
+                        <small  class="form-text text-muted" style="color: red !important;">{{ message }}</small>
+                        <br> 
+                        <br>
+                    {% endif %}
+                    <button type="submit" class="btn btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+                            <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
+                        </svg>
+                        reply all
+                    </button>
+                </form>
+               
+            </div>
 
 {% endif %}
     
+{% endblock %}
+
+
+
+
+{% block script %}
+<script>
+    // insert value of fake textarea to the hidden input value
+document.addEventListener('DOMContentLoaded', function(){
+    var purpose = "{{ purpose }}";
+    console.log("javascript executed!!!")
+    //handle the fake textarea of forward feature
+
+    if (purpose === "forward") {
+        // Handle the fake textarea of forward feature
+        document.querySelector("#forward").onsubmit = () => {
+            document.querySelector("#fake_textarea_content").value = document.querySelector("#fake_textarea").innerHTML;
+        }
+    } else if (purpose === "reply") {
+        // Handle the fake textarea of reply feature
+        document.querySelector("#reply").onsubmit = () => {
+            document.querySelector("#fake_text_area_content").value = document.querySelector("#fake_text_area").innerHTML;
+        }
+    } else if (purpose === "reply all") {
+        // Handle the fake textarea of reply feature
+        document.querySelector("#reply_all").onsubmit = () => {
+            document.querySelector("#fake_text_area_content").value = document.querySelector("#fake_text_area").innerHTML;
+        }
+    }
+
+
+    
+    //handle the fowarded div
+    var bar = document.querySelector("#forwarded");
+
+            if(bar != null)
+            {
+                const htmlStr = bar.innerText;
+                console.log(htmlStr);
+
+                const parser = new DOMParser();
+                const doc  = parser.parseFromString(htmlStr, "text/html");
+
+                console.log(doc.body.innerHTML);
+
+                bar.innerHTML = doc.body.innerHTML;
+
+                
+
+            }
+
+
+})
+</script>
+
+
 {% endblock %}

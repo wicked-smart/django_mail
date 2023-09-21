@@ -14,13 +14,13 @@
     <div class="container mt-3">
         <table class="table p-3  table-hover text-nowrap">
             <tbody>
-                {% for email in emails %}
+                {% for email  in emails %}
                     <tr>
                         <td>
                             To:&nbsp; 
                             {% with email.recipients_email_list|length as len  %}
-                                {% if len > 1%}
-                                    {{ email.recipients_email_list.0|truncatechars:8 }}
+                                {% if len > 1 %}
+                                    {{ email.recipients_email_list.0|truncatechars:8 }} 
                                 {% else %}
                                     {{ email.recipients_email_list.0 }}
                                 {% endif %}

@@ -15,14 +15,21 @@ class Email(models.Model):
     subject = models.CharField(max_length=256)
     body = models.TextField(blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+    forwarded_from = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, related_name="forwards" )
     read = models.BooleanField(default=False)
     archived = models.BooleanField(default=False)
+    parent_email = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL, related_name='replies')
+    thread = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL, related_name="reply_thread")
+
 
     def __str__(self):
-        return f"{self.user.first_name} {self.user.last_name} <{self.user.email}>"
+        return f"{self.subject} <{self.user.email}>"
     
     def recipients_email_list(self):
         return [user.email for user in self.recipients.all()]
+
+    def is_parent(self):
+        return self.parent_email is None
 
     def serialize(self):
         return {
