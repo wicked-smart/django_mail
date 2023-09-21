@@ -18,6 +18,7 @@ class Email(models.Model):
     forwarded_from = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, related_name="forwards" )
     read = models.BooleanField(default=False)
     archived = models.BooleanField(default=False)
+    bcc = models.ManyToManyField(User, blank=True, null=True, related_name="bccd")
     parent_email = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL, related_name='replies')
     thread = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL, related_name="reply_thread")
 
@@ -28,6 +29,9 @@ class Email(models.Model):
     def recipients_email_list(self):
         return [user.email for user in self.recipients.all()]
 
+    def bcc_list(self):
+        return [user.email for user in self.bcc.all()]
+    
     def is_parent(self):
         return self.parent_email is None
 

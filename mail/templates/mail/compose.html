@@ -23,36 +23,37 @@
             {% csrf_token %}
             <div class="mb-3">
                 <input class="form-control" type="text" value="New Email" aria-label="readonly input example" disabled readonly>
-                
             </div>
-            <div class="mb-3">
-                <input type="text" placeholder="Recipients" name="recipients" class="form-control">
-                {% if recipients_error_message %}
-                <small  class="form-text text-muted">{{ recipients_error_message }}</small> 
-                {% else %} 
-                <div class="form-text">
-                   Enter valid comma-space seperated email addresses 
+            <div class="form-group mb-3">
+                <div class="input-group mb-3">
+                    <input type="text" placeholder="Recipients" name="recipients" class="form-control">
+                    <div class="input-group-append d-flex">
+                        <span class="input-group-text cc_bcc_tags" id="cc_tag">cc</span>
+                        <span class="input-group-text cc_bcc_tags" id="bcc_tag">bcc</span>
+                    </div>
                 </div>
-                {% endif %}
+                <input type="text" id="cc_recipients" placeholder="CC Recipients" name="cc" class="form-control mb-3">
+                <input type="text" id="bcc_recipients" placeholder="BCC Recipients" name="bcc" class="form-control">
             </div>
-            <div class="mb-3">
+            <div id="subject" class="mb-3">
                 <input type="text" placeholder="Subject" name="subject" class="form-control">
             </div>
             {% if subject_error_message %}
-                <small  class="form-text text-muted">{{ subject_error_message }}</small> 
+            <small class="form-text text-muted">{{ subject_error_message }}</small>
             {% endif %}
-
             <div class="mb-3">
                 <textarea class="form-control" name="body" rows="8"></textarea>
             </div>
-            
             <button type="submit" class="btn btn-primary">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
-                    <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-send" viewBox="0 0 16 16">
+                    <path
+                        d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z" />
                 </svg>
                 send</button>
         </form>
     </div>
+    
 {% elif purpose == "forward" %}
 
         <h2 class="text-center text-success mt-2">Forward</h2>
@@ -185,7 +186,23 @@
 
 
 {% block script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    $(document).ready(function () {
+        // Initially hide the "cc" and "bcc" input fields
+        $("#cc_recipients").hide();
+        $("#bcc_recipients").hide();
+
+        // Add click event handlers to the "cc" and "bcc" tags
+        $("#cc_tag").click(function () {
+            $("#cc_recipients").toggle();
+        });
+
+        $("#bcc_tag").click(function () {
+            $("#bcc_recipients").toggle();
+        });
+    });
+
     // insert value of fake textarea to the hidden input value
 document.addEventListener('DOMContentLoaded', function(){
     var purpose = "{{ purpose }}";
@@ -209,8 +226,6 @@ document.addEventListener('DOMContentLoaded', function(){
         }
     }
 
-
-    
     //handle the fowarded div
     var bar = document.querySelector("#forwarded");
 

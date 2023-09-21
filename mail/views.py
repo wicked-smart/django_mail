@@ -143,12 +143,19 @@ def email(request, mail_id):
         
 
         print(forwarded_message)
+    
+    #prepare emails to display excluding bcc'd ones
+    all_recipients = email.recipients_email_list()
+    bcc_list = email.bcc_list()
+    recipients_to_display = [recipient for recipient in all_recipients if recipient not in bcc_list]
+
 
     return render(request, "mail/email_detail.html", {
         "email": email,
         "redirect_view_name": view_name,
         "forward_history": forward_history,
         "forwarded_message": forwarded_message,
+        "recipients_to_display": recipients_to_display
     })
 
 def emails_sent(request):
@@ -174,8 +181,13 @@ def compose(request):
         recipients = request.POST.get("recipients")
         subject = request.POST.get("subject")
         body = request.POST.get("body")
+        cc = request.POST.get("cc")
+        bcc = request.POST.get("bcc")
 
         print("recipients := ", recipients)
+        print("cc := ", cc)
+        print("bcc := ", bcc)
+
 
         if recipients == None or len(recipients) == 0: 
             return render(request, "mail/compose.html", {
@@ -193,6 +205,15 @@ def compose(request):
             # make a valid email address list of recipients objects
             valid_recipients = []
             recipients = recipients.split(", ")
+            cc = cc.split(", ")
+
+            #merge cc with reciepients 
+            for bar in cc:
+                if bar not in recipients:
+                    recipients.append(bar) 
+
+            #bcc receipients 
+            bcc = bcc.split(", ")
 
             for recipient in recipients:
                 try:
@@ -202,6 +223,20 @@ def compose(request):
                 except:
                     pass
             
+            #build valid bcc list
+            print("re := ", recipients)
+            print("bccccc := ", bcc)
+            valid_bcc = []
+            for bar in bcc:
+                try:
+                    user = User.objects.filter(email=bar)
+                    valid_bcc.append(user[0])
+                
+                except:
+                    pass
+            
+            print("valid_bcc:= ", valid_bcc)
+            
             email = Email.objects.create(user=request.user, sender=request.user)
             email.subject = subject
             email.body= body
@@ -210,6 +245,11 @@ def compose(request):
             for valid_recipient in valid_recipients:
                 email.recipients.add(valid_recipient)
             
+            #all all bcc'd reciepients
+            for bar in valid_bcc:
+                email.recipients.add(bar)
+                email.bcc.add(bar)
+
             email.save()
 
             return HttpResponseRedirect(reverse("index"))

@@ -1,0 +1,17 @@
+/* Style for CC/BCC tags */
+.cc_bcc_tags {
+    padding: 10px 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    vertical-align: bottom;
+    cursor: pointer;
+}
+
+/* Style for CC/BCC input */
+.cc_bcc_input {
+    border: none;
+    outline: none;
+    box-shadow: none;
+    padding: 5px;
+}

@@ -55,21 +55,8 @@
             <div class="d-flex flex-column">
                 <p class="mb-0 fs-5 fw-bold">{{ email.user.username }}&nbsp;<span class="fs-6 fw-light">&lt;{{ email.sender.email}}&gt;</span></p>
                 <div class="fw-light">to 
-                    {% with email.recipients_email_list|length as len %}
-                    {% if len > 1 %}
-                       {% for email in email.recipients_email_list %} 
-                            {% if not forloop.last %}
-                                 {{ email }}&#44;
-                            {% else %}
-                                {{ email }}
-                            {% endif %}
-                        {% endfor %}
-
-                    {% else %}
-                        {{ email.recipients_email_list.0 }} 
-                    {% endif %}
-
-                    {% endwith %}
+                    
+                    {{ recipients_to_display|join:', '}}
 
                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
                         <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
