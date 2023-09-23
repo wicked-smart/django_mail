@@ -499,3 +499,17 @@ def reply_all(request, email_id):
     # new_email.receipients.add(email.reciepients.all())
     # get forwarding history 
     
+
+def schedule_send(request, email_id):
+    
+    email = Email.objects.get(pk=email_id)
+
+    if request.method == 'POST':
+        schedule_date = request.POST.get('scheduleDate')
+        schedule_time = request.POST.get('scheduleTime')
+
+        reciepients = request.POST.get('reciepients')
+        subject = request.POST.get('subject')
+        body = request.POST.get('body')
+
+        

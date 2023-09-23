@@ -11,5 +11,6 @@ urlpatterns = [
     path('compose/', views.compose, name="compose"),
     path('forward/<int:email_id>', views.forward, name="forward"),
     path('reply/<int:email_id>', views.reply, name="reply"),
-    path('reply_all/<int:email_id>', views.reply_all, name="reply_all")
+    path('reply_all/<int:email_id>', views.reply_all, name="reply_all"),
+    path('schedule_send/<int:email_id>', views.schedule_send, name="schedule_send")
 ]

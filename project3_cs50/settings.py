@@ -30,7 +30,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
-    'djangomail-production.up.railway.app'
+    'web-production-4322.up.railway.app'
     ]
 
 
@@ -132,4 +132,11 @@ STATIC_ROOT = BASE_DIR / 'static'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_TRUSTED_ORIGINS = ['https://djangomail-production.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['https://web-production-4322.up.railway.app/']
+
+
+# Celery settings
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_TIMEZONE = "Asia/Kolkata"
+
