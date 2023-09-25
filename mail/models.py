@@ -50,4 +50,22 @@ class Email(models.Model):
 
 
 
-        
+class ScheduledEmail(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="scheduled_emails")
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="emails_to_be_sent")
+    recipients = models.ManyToManyField(User, related_name="emails_to_be_recieved")
+    subject = models.CharField(max_length=256)
+    body = models.TextField(blank=True)
+    scheduled_datetime = models.DateTimeField()
+    bcc = models.ManyToManyField(User, blank=True, null=True, related_name="bccd_to_be_emails")
+
+    def __str__(self):
+        return f"{self.subject} <{self.user.email}>"
+
+
+class Attachment(models.Model):
+    email = models.ForeignKey(Email, on_delete=models.CASCADE, related_name="attachments")
+    file = models.FileField(upload_to='attachments/')
+
+    def __str__(self):
+        return f"{self.email} {self.file.name}"

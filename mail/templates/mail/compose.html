@@ -39,7 +39,7 @@
 
             <div class="form-group mb-3">
                 <div class="input-group mb-3 d-flex flex-row">
-                    <input type="text" placeholder="Recipients" name="recipients" class="form-control d-flex w-25 p-4">
+                    <input type="text" placeholder="Recipients" id="recipients" name="recipients" class="form-control d-flex w-25 p-4">
                     <div class="input-group-append d-flex flex-row h-50">
                         <span class="input-group-text cc_bcc_tags" id="cc_tag">cc</span>
                         <span class="input-group-text cc_bcc_tags" id="bcc_tag">bcc</span>
@@ -49,15 +49,15 @@
                 <input type="text" id="bcc_recipients" placeholder="BCC Recipients" name="bcc" class="form-control">
             </div>
 
-            <div id="subject" class="mb-3">
-                <input type="text" placeholder="Subject" name="subject" class="form-control">
+            <div  class="mb-3">
+                <input type="text" placeholder="Subject" id="subject" name="subject" class="form-control">
             </div>
 
             {% if subject_error_message %}
             <small class="form-text text-muted">{{ subject_error_message }}</small>
             {% endif %}
             <div class="mb-3">
-                <textarea class="form-control" name="body" rows="8"></textarea>
+                <textarea class="form-control" id="body" name="body" rows="8"></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary">
@@ -83,7 +83,7 @@
                 </svg>
                 Schedule Send
             </button>
-
+</form>
             <!-- Modal -->
             <div class="modal fade" id="myModal" role="dialog">
               <div class="modal-dialog">
@@ -97,7 +97,8 @@
                       </button>
                   </div>
                   <div class="modal-body">
-                      <form id="scheduleForm">
+                      <form id="scheduleForm" method="post" action="{% url 'schedule_send' %}">
+                        {% csrf_token %}
                           <div class="form-group">
                               <label for="scheduleDate">Date:</label>
                               <input type="text" class="form-control" id="scheduleDate" name="scheduleDate">
@@ -106,6 +107,13 @@
                               <label for="scheduleTime">Time:</label>
                               <input type="text" class="form-control" id="scheduleTime" name="scheduleTime">
                           </div>
+
+                          <!-- hidden elements -->
+                          <input type="hidden" id="ScheduleSubject" name="subject" >
+                          <input type="hidden" id="ScheduleRecipients" name="recipients" >
+                          <input type="hidden" id="ScheduleBody" name="body" >
+                          <input type="hidden" id="ScheduleCC" name="cc" >
+                          <input type="hidden" id="ScheduleBCC" name="bcc" >
                       </form>
                   </div>
                   <div class="modal-footer">
@@ -115,9 +123,6 @@
                 
               </div>
             </div>
-
-
-            </form>
         </div>
   
     
@@ -129,7 +134,7 @@
                 {% csrf_token %}
                 
                 <div class="mb-3">
-                    <input type="text" placeholder="Recipients" name="recipients" class="form-control">
+                    <input type="text" placeholder="Recipients"  name="recipients" class="form-control">
                     <div class="form-text">
                        Enter valid comma-space seperated email addresses 
                     </div>
@@ -268,12 +273,12 @@
         explicitMode: true,
       });
   
-      // Handle scheduling send button click
+      
       $('#scheduleSend').on('click', function() {
         var selectedDate = $('#scheduleDate').val();
         var selectedTime = $('#scheduleTime').val();
   
-        // Do something with the selected date and time (e.g., schedule email send)
+       
         console.log("Scheduled Date:", selectedDate);
         console.log("Scheduled Time:", selectedTime);
   
@@ -286,7 +291,7 @@
         $("#cc_recipients").hide();
         $("#bcc_recipients").hide();
 
-        // Add click event handlers to the "cc" and "bcc" tags
+        
         $("#cc_tag").click(function () {
             $("#cc_recipients").toggle();
         });
@@ -296,6 +301,9 @@
         });
     });
 
+
+   
+
     // insert value of fake textarea to the hidden input value
 document.addEventListener('DOMContentLoaded', function(){
     var purpose = "{{ purpose }}";
@@ -303,12 +311,12 @@ document.addEventListener('DOMContentLoaded', function(){
     //handle the fake textarea of forward feature
 
     if (purpose === "forward") {
-        // Handle the fake textarea of forward feature
+        
         document.querySelector("#forward").onsubmit = () => {
             document.querySelector("#fake_textarea_content").value = document.querySelector("#fake_textarea").innerHTML;
         }
     } else if (purpose === "reply") {
-        // Handle the fake textarea of reply feature
+        
         document.querySelector("#reply").onsubmit = () => {
             document.querySelector("#fake_text_area_content").value = document.querySelector("#fake_text_area").innerHTML;
         }
@@ -338,6 +346,40 @@ document.addEventListener('DOMContentLoaded', function(){
 
             }
 
+     //send additional fields data like subject, receipients, body etc. on scheduleSend button click
+     document.querySelector("#scheduleSend").addEventListener('click', function(){
+
+        var subject = document.getElementById('subject').value;
+        var recipients = document.getElementById('recipients').value;
+        var cc = document.getElementById('cc_recipients').value;
+        var bcc = document.getElementById('bcc_recipients').value;
+        var body = document.getElementById('body').value;
+        var scheduleDate = document.getElementById('scheduleDate').value;
+        var scheduleTime = document.getElementById('scheduleTime').value;
+
+        // Create an object to hold the data
+        var data = {
+            subject: subject,
+            recipients: recipients,
+            body: body,
+            scheduleDate: scheduleDate,
+            scheduleTime: scheduleTime
+        };
+
+        console.log("data:= ", data)
+
+        document.getElementById('ScheduleSubject').value = subject;
+        document.getElementById('ScheduleRecipients').value = recipients;
+        document.getElementById('ScheduleBody').value = body;
+        document.getElementById('ScheduleCC').value = cc;
+        document.getElementById('ScheduleBCC').value = bcc;
+
+        
+        // Submit the schedule send form
+        document.getElementById('scheduleForm').submit();
+        alert("succesfully scheduled !")
+
+     })
 
 })
 </script>

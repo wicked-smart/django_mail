@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from .models import *
 from django.db import IntegrityError
 from django.contrib.auth import authenticate, login, logout
@@ -9,9 +9,14 @@ from django.contrib.auth.decorators import login_required
 from urllib.parse import urlparse
 from django.db.models import Q 
 from pathlib import PurePath
+from .tasks import *
 from django.template.defaultfilters import linebreaksbr
 import re
 import json 
+from .utils import CustomJSONEncoder
+from datetime import datetime, timedelta
+from celery.result import AsyncResult
+
 
 # Create your views here.
 
@@ -500,16 +505,119 @@ def reply_all(request, email_id):
     # get forwarding history 
     
 
-def schedule_send(request, email_id):
+
+def schedule_send(request):
     
-    email = Email.objects.get(pk=email_id)
-
     if request.method == 'POST':
-        schedule_date = request.POST.get('scheduleDate')
-        schedule_time = request.POST.get('scheduleTime')
+        print("request post:= ", request.POST)
+        schedule_date_str = request.POST.get('scheduleDate')
+        schedule_time_str = request.POST.get('scheduleTime')
 
-        reciepients = request.POST.get('reciepients')
-        subject = request.POST.get('subject')
-        body = request.POST.get('body')
+        # Combine date and time strings into a single datetime object
+        schedule_datetime_str = f'{schedule_date_str} {schedule_time_str}'
+        scheduled_datetime = datetime.strptime(schedule_datetime_str, '%Y-%m-%d %H:%M')
 
+        print(scheduled_datetime)
+        print(type(scheduled_datetime))
+        if scheduled_datetime < datetime.now():
+             return render(request, "mail/compose.html", {
+                "purpose": "compose",
+                "recipients_error_message": "invalid schedule"
+                })   
         
+        recipients = request.POST.get("recipients")
+        subject = request.POST.get("subject")
+        body = request.POST.get("body")
+        cc = request.POST.get("cc")
+        bcc = request.POST.get("bcc")
+
+        print("recipients := ", recipients)
+        print("cc := ", cc)
+        print("bcc := ", bcc)
+
+
+        if recipients == None or len(recipients) == 0: 
+            return render(request, "mail/compose.html", {
+                "purpose": "compose",
+                "recipients_error_message": "you need to have atleast one recipient"
+                })
+        
+        elif subject == None or len(subject) == 0:
+            return render(request, "mail/compose.html", {
+                "purpose": "compose",
+                "subject_error_message": "subject cannot be empty!!"
+                })
+        else:
+
+            # make a valid email address list of recipients objects
+            valid_recipients = []
+            recipients = recipients.split(", ")
+            cc = cc.split(", ")
+
+            #merge cc with reciepients 
+            for bar in cc:
+                if bar not in recipients:
+                    recipients.append(bar) 
+
+            #bcc receipients 
+            bcc = bcc.split(", ")
+
+            for recipient in recipients:
+                try:
+                    user = User.objects.filter(email=recipient)
+                    valid_recipients.append(user[0])
+                
+                except:
+                    pass
+            
+            #build valid bcc list
+            print("re := ", recipients)
+            print("bccccc := ", bcc)
+            valid_bcc = []
+            for bar in bcc:
+                try:
+                    user = User.objects.filter(email=bar)
+                    valid_bcc.append(user[0])
+                
+                except:
+                    pass
+            
+            print("valid_bcc:= ", valid_bcc)
+            
+
+            #Store the scheduled emails in the db
+            scheduleEmail = ScheduledEmail.objects.create(
+                user=request.user,
+                sender=request.user,
+                subject=subject,
+                body=body,
+                scheduled_datetime=scheduled_datetime
+            )
+
+            for recipient in valid_recipients:
+                scheduleEmail.recipients.add(recipient)
+            
+            scheduleEmail.save()
+            
+    
+            valid_recipients_ids = [recipient.id for recipient in valid_recipients ]
+            valid_bcc_ids = [recipient.id for reciepient in valid_bcc]
+
+            output = test_celery_connection.delay()
+            print("celery result := ", output.get())
+
+            #call tasks in tasks.py
+            countdown = scheduled_datetime - datetime.now()
+            email_sent = send_email_at_scheduled_time.apply_async(args=[request.user.id, subject, valid_recipients_ids, valid_bcc_ids, body, scheduled_datetime], countdown=countdown.seconds)
+            return HttpResponseRedirect(reverse('index'))
+
+
+def testing_celery():
+
+    
+    scheduled_time = datetime.now() + timedelta(minutes=3)
+    countdown = scheduled_time - datetime.now()
+    result = add.apply_async(args=[23,34], countdown=countdown.seconds)
+    task_id= result.task_id
+    result = AsyncResult(task_id)
+    return HttpResponse({'result': result.get()})

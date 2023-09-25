@@ -4,3 +4,5 @@ from .models import *
 
 admin.site.register(User)
 admin.site.register(Email)
+admin.site.register(ScheduledEmail)
+admin.site.register(Attachment)
