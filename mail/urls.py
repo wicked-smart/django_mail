@@ -12,6 +12,5 @@ urlpatterns = [
     path('forward/<int:email_id>', views.forward, name="forward"),
     path('reply/<int:email_id>', views.reply, name="reply"),
     path('reply_all/<int:email_id>', views.reply_all, name="reply_all"),
-    path('schedule_send/', views.schedule_send, name="schedule_send"),
-    path('testing_celery/', views.testing_celery, name="testing_celery")
+    path('schedule_send/', views.schedule_send, name="schedule_send")
 ]

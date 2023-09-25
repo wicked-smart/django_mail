@@ -18,6 +18,10 @@ class Command(BaseCommand):
         now  = datetime.now()
 
         pending_emails = ScheduledEmail.objects.filter(scheduled_datetime__lte=now)
+        if len(pending_emails) == 0:
+            self.stdout.write(self.style.SUCCESS('No Pending Emails Remaining as of now!!'))
+            return
+
         for email in pending_emails:
             recipients_id = [reciepient.id for reciepient in email.recipients.all() ]
             bcc_ids = [bcc.id for bcc in email.bcc.all() ]
