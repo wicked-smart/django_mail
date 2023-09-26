@@ -7,51 +7,27 @@
     Email Detail
 {% endblock %}
 
-{% block script %}
-
-<script>
-        document.addEventListener('DOMContentLoaded', function(){
-            var bar = document.querySelector("#reply");
-
-            if(bar != null)
-            {
-                const htmlStr = bar.innerText;
-                console.log(htmlStr);
-
-                const parser = new DOMParser();
-                const doc  = parser.parseFromString(htmlStr, "text/html");
-
-                console.log(doc.body.innerHTML);
-
-                bar.innerHTML = doc.body.innerHTML;
-
-                
-
-            }
-
-        })
-</script>
-{% endblock %}
 
 {% block body %}
 
     <div class="container w-75  p-3">
-        <div id="top-emails-bar" class="mb-4">
+            <div id="top-emails-bar" class="mb-4">
 
-            <!-- redirect to the referer page -->
-            {% with redirect_view_name as view %}
-            <a class="link-dark ml-n2" href="{% url view %}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-left-short" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"/>
-                </svg>
-            </a>
-            {% endwith %}
-            
-            <span class="fs-3 fw-bold"> &nbsp;{{ email.subject }}</span>
-        </div>
+                <!-- redirect to the referer page -->
+                {% with redirect_view_name as view %}
+                <a class="link-dark ml-n2" href="{% url view %}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"/>
+                    </svg>
+                </a>
+                {% endwith %}
+                
+                <span class="fs-3 fw-bold"> &nbsp;{{ email.subject }}</span>
+            </div>
+        
         
 
-        <div class="d-flex mb-5">
+        <div class="d-flex flex-row mb-5">
             <div class="d-flex flex-column">
                 <p class="mb-0 fs-5 fw-bold">{{ email.user.username }}&nbsp;<span class="fs-6 fw-light">&lt;{{ email.sender.email}}&gt;</span></p>
                 <div class="fw-light">to 
@@ -66,6 +42,22 @@
             <div class="ms-auto fw-light">
                 {{ email.timestamp }}
             </div>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <div class="d-flex flex-row my-1">
+                <a href="{% url 'delete_email' email.id %}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16" data-toggle="tooltip" data-placement="bottom" title="Delete">
+                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
+                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
+                  </svg>
+                </a>
+                {% if redirect_view_name != 'archived_emails' %}
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="{% url 'archive' email.id %}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-archive" viewBox="0 0 16 16" data-toggle="tooltip" data-placement="bottom" title="Archive This Conversation">
+                        <path d="M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>
+                    </svg></a>
+                {% endif %}
+            </div>
+
         </div>
 
         {% with email.subject|slice:":5" as foo %}
@@ -119,4 +111,37 @@
 
     </div>
 
+{% endblock %}
+
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+        document.addEventListener('DOMContentLoaded', function(){
+            var bar = document.querySelector("#reply");
+
+            if(bar != null)
+            {
+                const htmlStr = bar.innerText;
+                console.log(htmlStr);
+
+                const parser = new DOMParser();
+                const doc  = parser.parseFromString(htmlStr, "text/html");
+
+                console.log(doc.body.innerHTML);
+
+                bar.innerHTML = doc.body.innerHTML;
+
+                
+
+            }
+
+        })
+
+    
+</script>
 {% endblock %}

@@ -1,8 +1,6 @@
 from celery import shared_task
 from .models import *
-@shared_task
-def test_celery_connection():
-    return "Celery connection test successful!"
+
 
 @shared_task
 def send_email_at_scheduled_time(id, subject,reciepients, bcc,  body,  scheduled_time):
@@ -34,7 +32,3 @@ def send_email_at_scheduled_time(id, subject,reciepients, bcc,  body,  scheduled
     except Exception as e:
         print(e)
     
-
-@shared_task
-def add(a,b):
-    return a+b

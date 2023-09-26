@@ -1,0 +1,51 @@
+{% extends "mail/layout2.html" %}
+{% load static %}
+{% load remove_tags %}  #load the registered custom tag
+
+{% block title %}
+    Inbox&nbsp;({{ emails_count }}) -{{ request.user.email }}
+{% endblock %}
+
+{% block stylesheet %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;500&family=Roboto:wght@300&display=swap');
+</style>
+{% endblock %}
+
+{% block body %}
+
+    <h2 class="text-center text-success mt-2">Archived Emails</h2>
+<div class="container mt-3">
+    <table class="table p-3 table-hover text-nowrap">
+        <tbody>
+            {% for email in emails %}
+                <tr>
+                    <td class="w-10">
+                        <span>{{ email.sender.first_name | capfirst }} {{ email.sender.last_name | capfirst }}</span>
+                    </td>
+                    <td> 
+                        <a href="{% url 'email' email.id %}" style="font-family: 'Open-sans', sans-serif; font-weight:300;"  class="link-primary">{{ email.subject | capfirst }} -- &nbsp;&nbsp;<span >{{ email.body|remove_tags|truncatewords:15 }}</span></a>
+                    </td>
+
+                    <td>{{ email.timestamp }}</td>
+                    
+                </tr>
+            {% endfor %}
+        </tbody>
+        
+    </table>
+    
+</div>
+{% endblock %}
+
+<!--
+    <p style="font-family: 'Open-sans', sans-serif; font-weight:200; font-size: 1rem;" class="text-center">
+        Welcome to the Read Email!
+    </p>
+    <p style="font-family: 'Open-sans', sans-serif; font-weight:800; font-size: 2.5rem;" class="text-center">
+        Welcome to The Unread Email!
+    </p>
+
+-->
+
+

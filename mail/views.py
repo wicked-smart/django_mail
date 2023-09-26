@@ -19,7 +19,7 @@ from celery.result import AsyncResult
 
 
 # Create your views here.
-
+@login_required(login_url="login")
 def index(request):
     
     if request.user.is_authenticated:
@@ -102,7 +102,7 @@ def logout_view(request):
     return HttpResponseRedirect(reverse("index"))
 
 
-
+@login_required(login_url="login")
 def email(request, mail_id):
 
     #mark mail as read
@@ -163,9 +163,10 @@ def email(request, mail_id):
         "recipients_to_display": recipients_to_display
     })
 
+@login_required(login_url="login")
 def emails_sent(request):
     
-    emails = Email.objects.filter(sender=request.user)
+    emails = Email.objects.filter(sender=request.user, archived=False)
 
 
     return render(request, "mail/sent_emails.html", {
@@ -189,7 +190,7 @@ def compose(request):
         cc = request.POST.get("cc")
         bcc = request.POST.get("bcc")
 
-        print("recipients := ", recipients)
+        print("recipients := ", len(recipients))
         print("cc := ", cc)
         print("bcc := ", bcc)
 
@@ -197,7 +198,7 @@ def compose(request):
         if recipients == None or len(recipients) == 0: 
             return render(request, "mail/compose.html", {
                 "purpose": "compose",
-                "recipients_error_message": "you need to have atleast one recipient"
+                "recipients_error_message": "You need to have atleast one recipient"
                 })
         
         elif subject == None or len(subject) == 0:
@@ -261,6 +262,7 @@ def compose(request):
 
 
 #function to forward your  email id
+@login_required(login_url="login")
 def forward(request, email_id):
 
     #get the email 
@@ -351,6 +353,7 @@ def forward(request, email_id):
 
 
 # reply function 
+@login_required(login_url="login")
 def reply(request, email_id):
 
     email= Email.objects.get(id=email_id)
@@ -422,7 +425,7 @@ def reply(request, email_id):
         
 
 
-
+@login_required(login_url="login")
 def reply_all(request, email_id):
    
     email= Email.objects.get(id=email_id)
@@ -505,7 +508,7 @@ def reply_all(request, email_id):
     # get forwarding history 
     
 
-
+@login_required(login_url="login")
 def schedule_send(request):
     
     if request.method == 'POST':
@@ -531,9 +534,6 @@ def schedule_send(request):
         cc = request.POST.get("cc")
         bcc = request.POST.get("bcc")
 
-        print("recipients := ", recipients)
-        print("cc := ", cc)
-        print("bcc := ", bcc)
 
 
         if recipients == None or len(recipients) == 0: 
@@ -571,8 +571,6 @@ def schedule_send(request):
                     pass
             
             #build valid bcc list
-            print("re := ", recipients)
-            print("bccccc := ", bcc)
             valid_bcc = []
             for bar in bcc:
                 try:
@@ -581,9 +579,6 @@ def schedule_send(request):
                 
                 except:
                     pass
-            
-            print("valid_bcc:= ", valid_bcc)
-            
 
             #Store the scheduled emails in the db
             scheduleEmail = ScheduledEmail.objects.create(
@@ -603,8 +598,7 @@ def schedule_send(request):
             valid_recipients_ids = [recipient.id for recipient in valid_recipients ]
             valid_bcc_ids = [recipient.id for reciepient in valid_bcc]
 
-            output = test_celery_connection.delay()
-            print("celery result := ", output.get())
+            
 
             #call tasks in tasks.py
             countdown = scheduled_datetime - datetime.now()
@@ -612,12 +606,32 @@ def schedule_send(request):
             return HttpResponseRedirect(reverse('index'))
 
 
-def testing_celery():
+@login_required(login_url="login")
+def delete_email(request, email_id):
 
+    email = Email.objects.get(pk=email_id)
+    email.delete()
+    return HttpResponseRedirect(reverse("index"))
+
+
+
+
+@login_required(login_url="login")
+def archive(request, email_id):
+
+    email = Email.objects.get(pk=email_id)
+    email.archived = True
+    email.save()
     
-    scheduled_time = datetime.now() + timedelta(minutes=3)
-    countdown = scheduled_time - datetime.now()
-    result = add.apply_async(args=[23,34], countdown=countdown.seconds)
-    task_id= result.task_id
-    result = AsyncResult(task_id)
-    return HttpResponse({'result': result.get()})
+    return HttpResponseRedirect(reverse("archived_emails"))
+
+
+
+
+@login_required(login_url="login")
+def archived_emails(request):
+
+    archives = Email.objects.filter(user=request.user, archived=True)
+    return render(request, "mail/archived.html",{
+        "emails": archives
+    })
