@@ -20,5 +20,7 @@ RUN echo 'prem:PremR1s2B3w4N5p' | chpasswd
 RUN chmod -R 700 /app/mail
 RUN chown -R prem:prem /app/mail
 
+ENV USER_ID $(id -u prem)
+
 # Start your Django application and Celery worker
 CMD ["python3", "app.py"]
