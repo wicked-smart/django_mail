@@ -25,7 +25,7 @@ chown -R "$username:$username" "$directory"
 
 # Add the user to additional groups as needed
 # For example, adding the user to the sudo group for administrative privileges:
-sudo usermod -aG sudo "$username"
+usermod -aG sudo "$username"
 
 # Print a message indicating that the user has been created and permissions granted
 echo "User '$username' has been created with appropriate permissions."
