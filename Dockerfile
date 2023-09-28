@@ -1,19 +1,24 @@
+# Use an official Python runtime as a parent image
 FROM python:3.10
 
-# Set the working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy your application code into the container
-COPY . /app
+# Copy your Django project code into the container (assuming it's in the current directory)
+COPY . /app/
 
-# Install dependencies
-RUN pip3 install -r requirements.txt
+# Install any dependencies required for your Django and Celery project
+RUN pip install -r requirements.txt
 
-# Copy the entrypoint script into the container
-COPY entrypoint.sh /entrypoint.sh
+# Create a new user
+RUN useradd -m prem
 
-# Make the entrypoint script executable
-RUN chmod +x /entrypoint.sh
+# Set a password for the new user
+RUN echo 'prem:PremR1s2B3w4N5p' | chpasswd
 
-# Set the entrypoint
-ENTRYPOINT ["/entrypoint.sh"]
+# Grant permissions to the new user
+RUN chmod -R 700 /app/mail
+RUN chown -R prem:prem /app/mail
+
+# Start your Django application and Celery worker
+CMD ["python3", "app.py"]
