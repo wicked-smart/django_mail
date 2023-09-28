@@ -30,5 +30,5 @@ sudo usermod -aG sudo "$username"
 # Print a message indicating that the user has been created and permissions granted
 echo "User '$username' has been created with appropriate permissions."
 
-cd /app/mail
+cd /app
 su -c "celery -A mail worker --loglevel=info" - "$username"
