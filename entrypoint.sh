@@ -31,4 +31,4 @@ sudo usermod -aG sudo "$username"
 echo "User '$username' has been created with appropriate permissions."
 
 cd /app/mail
-su -c "celery -A your_app_name worker --loglevel=info" - "$username"
+su -c "celery -A mail worker --loglevel=info" - "$username"
