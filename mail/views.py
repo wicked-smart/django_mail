@@ -16,6 +16,7 @@ import json
 from .utils import CustomJSONEncoder
 from datetime import datetime, timedelta
 from celery.result import AsyncResult
+from django.contrib import messages
 
 
 # Create your views here.
@@ -154,13 +155,15 @@ def email(request, mail_id):
     bcc_list = email.bcc_list()
     recipients_to_display = [recipient for recipient in all_recipients if recipient not in bcc_list]
 
-
+    attachments = email.attachments.all()
+    icons = [attachment.file.name.split('.')[1] for attachment in attachments ]
     return render(request, "mail/email_detail.html", {
         "email": email,
         "redirect_view_name": view_name,
         "forward_history": forward_history,
         "forwarded_message": forwarded_message,
-        "recipients_to_display": recipients_to_display
+        "recipients_to_display": recipients_to_display,
+        "icons": icons
     })
 
 @login_required(login_url="login")
@@ -175,9 +178,11 @@ def emails_sent(request):
     })
     
 
+@login_required(login_url='login')
 def compose(request):
 
     if request.method == "GET":
+
         return render(request, "mail/compose.html",
             {
                 "purpose": "compose"
@@ -189,10 +194,9 @@ def compose(request):
         body = request.POST.get("body")
         cc = request.POST.get("cc")
         bcc = request.POST.get("bcc")
+        files = request.FILES.getlist("files")
 
-        print("recipients := ", len(recipients))
-        print("cc := ", cc)
-        print("bcc := ", bcc)
+        print("files := ",files)
 
 
         if recipients == None or len(recipients) == 0: 
@@ -230,8 +234,6 @@ def compose(request):
                     pass
             
             #build valid bcc list
-            print("re := ", recipients)
-            print("bccccc := ", bcc)
             valid_bcc = []
             for bar in bcc:
                 try:
@@ -241,11 +243,16 @@ def compose(request):
                 except:
                     pass
             
-            print("valid_bcc:= ", valid_bcc)
             
             email = Email.objects.create(user=request.user, sender=request.user)
             email.subject = subject
             email.body= body
+
+            #add attachments 
+            for file in files:
+                upload_file = UploadedFile(file=file)
+                upload_file.save()
+                email.attachments.add(upload_file)
 
             #add all recipients 
             for valid_recipient in valid_recipients:
@@ -257,7 +264,7 @@ def compose(request):
                 email.bcc.add(bar)
 
             email.save()
-
+            messages.success(request, "Email sent successfully!")
             return HttpResponseRedirect(reverse("index"))
 
 
@@ -603,6 +610,7 @@ def schedule_send(request):
             #call tasks in tasks.py
             countdown = scheduled_datetime - datetime.now()
             email_sent = send_email_at_scheduled_time.apply_async(args=[request.user.id, subject, valid_recipients_ids, valid_bcc_ids, body, scheduled_datetime], countdown=countdown.seconds)
+            messages.success(request, "Email Scheduled successfully!")
             return HttpResponseRedirect(reverse('index'))
 
 

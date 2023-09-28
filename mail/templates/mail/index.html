@@ -13,6 +13,16 @@
 {% endblock %}
 
 {% block body %}
+{% if messages %}
+    <div class="alert alert-success alert-dismissible fade show text-center" id="myAlert" role="alert">
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+{% endif %}
 
     <h2 class="text-center text-success mt-2">Inbox</h2>
 <div class="container mt-3">
@@ -49,5 +59,16 @@
     
 
 
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function () {
+        $('[data-dismiss="alert"]').on('click', function () {
+           $('#myAlert').alert('close');
+    });
+});
+</script>
 
 {% endblock %}

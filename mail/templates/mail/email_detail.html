@@ -75,7 +75,32 @@
                     {{ email.body | linebreaks }}
                 </div>
             {% endif %}
-        {% endwith %}
+        {% endwith %}    
+                <!-- Display Attachments with Icons -->
+        {% if email.attachments.all %}
+        <h2>Attachments</h2>
+        <ul class="d-flex flex-row justify-content-around">
+            {% for icon in icons %}
+            
+                <!-- Check the file extension and display corresponding icon -->
+                        {% if icon is 'pdf' %}
+                            <img src="{% static 'mail/icons/pdf-icon.png' %}" width="50px" height="50px" alt="PDF">
+                        {% elif icon is 'doc' %}
+                            <img src="{% static 'mail/icons/word-icon.png' %}" alt="Word">
+                        
+                        {% else %}
+                            <!-- If no specific icon, use a generic one -->
+                            <a href="#">
+                                <img src="{% static 'mail/icons/generic-icon.jpg' %}" width="150px" height="150px" alt="File">
+                            </a>
+                            
+                        {% endif %}
+                
+                
+            
+            {% endfor %}
+            </ul>
+        {% endif %}
         
         <br>
         <div>
