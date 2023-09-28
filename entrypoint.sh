@@ -17,7 +17,7 @@ useradd -m "$username"
 echo -e "$password\n$password" | passwd "$username"
 
 # Define a directory to which you want to grant permissions
-directory="/app/mail"
+directory="/app"
 
 # Grant read and write permissions to the new user for the specified directory
 chmod -R 700 "$directory"
