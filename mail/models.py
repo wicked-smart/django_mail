@@ -21,7 +21,7 @@ class UploadedFile(models.Model):
 
     def __str__(self):
         return f"{self.file.name}"
-
+'''
     def save(self, *args, **kwargs):
             super().save(*args, **kwargs)
             # Generate and save a thumbnail when an attachment is uploaded
@@ -52,6 +52,8 @@ class UploadedFile(models.Model):
                     self.thumbnail= File(thumbnail_file)
 
 
+'''
+    
     
     
 
