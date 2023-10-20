@@ -157,9 +157,9 @@
                     {% endif %}
                 </div>
                 <input id="fake_textarea_content" type="hidden" name="body">
-                <div id="fake_textarea" contenteditable="true" class="form-control mb-3 p-3 overflow-auto">  
+                <div id="fake_textarea" contenteditable="true" class="form-control mb-3 p-3 overflow-auto" style="min-height: 14em;">  
                           
-<br><br>
+
                     {{ forwarded_message|safe }} 
             
                     
@@ -199,9 +199,8 @@
                         {% endif %}
                     </div>
                     <input id="fake_text_area_content" type="hidden" name="reply">
-                    <div id="fake_text_area" contenteditable="true" class="form-control mb-3 p-3 overflow-auto">  
+                    <div id="fake_text_area" contenteditable="true" class="form-control mb-3 p-3 overflow-auto" style="min-height: 14em;">  
                               
-    <br><br>
                     </div>
                     {% if message %}
                          <small  class="form-text text-muted"style="color: red !important;">{{ message }}</small> 
@@ -241,9 +240,9 @@
                         {% endif %}
                     </div>
                     <input id="fake_text_area_content" type="hidden" name="reply_all">
-                    <div id="fake_text_area" contenteditable="true" class="form-control mb-3 p-3 overflow-auto">  
+                    <div id="fake_text_area" contenteditable="true" class="form-control mb-3 p-3 overflow-auto" style="min-height: 14em;">  
                               
-    <br><br>
+   
                     </div>
                     {% if message %}
                         <small  class="form-text text-muted" style="color: red !important;">{{ message }}</small>
