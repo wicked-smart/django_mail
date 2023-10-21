@@ -619,7 +619,7 @@ def delete_email(request, email_id):
 
     email = Email.objects.get(pk=email_id)
     email.delete()
-    #messages.success(request, "Email Deleted successfully!")
+    messages.success(request, "Email Deleted successfully!")
     return HttpResponseRedirect(reverse("index"))
 
 
