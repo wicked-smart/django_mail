@@ -3,7 +3,7 @@
 {% load remove_tags %}  #load the registered custom tag
 
 {% block title %}
-    Inbox&nbsp;({{ emails_count }}) -{{ request.user.email }}
+    Inbox&nbsp;({{ emails_archived }}) -{{ request.user.email }}
 {% endblock %}
 
 {% block stylesheet %}

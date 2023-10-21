@@ -643,7 +643,7 @@ def archived_emails(request):
     archives = Email.objects.filter(user=request.user, archived=True)
     return render(request, "mail/archived.html",{
         "emails": archives,
-        "emails_count": len(archives)
+        "emails_archived": len(archives)
     })
 
 

@@ -96,23 +96,23 @@ WSGI_APPLICATION = 'project3_cs50.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-#if IS_HEROKU_APP:
+if IS_HEROKU_APP:
     # In production on Heroku the database configuration is derived from the `DATABASE_URL`
     # environment variable by the dj-database-url package. `DATABASE_URL` will be set
     # automatically by Heroku when a database addon is attached to your Heroku app. See:
     # https://devcenter.heroku.com/articles/provisioning-heroku-postgres
     # https://github.com/jazzband/dj-database-url
-DATABASE_URL = os.environ.get('DATABASE_URL')
-DATABASES = {
-    "default": dj_database_url.config(
-        default=DATABASE_URL,
-        conn_max_age=600,
-        conn_health_checks=True,
-        ssl_require=True,
-    ),
-}
+    DATABASE_URL = os.environ.get('DATABASE_URL')
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=True,
+        ),
+    }
 
-'''
+
 else:
     # When running locally in development or in CI, a sqlite database file will be used instead
     # to simplify initial setup. Longer term it's recommended to use Postgres locally too.
@@ -123,7 +123,7 @@ else:
         }
     }
 
-'''
+
 
 
 
