@@ -25,7 +25,7 @@ def index(request):
     
     if request.user.is_authenticated:
         user = request.user
-        emails = Email.objects.filter(recipients=user)
+        emails = Email.objects.filter(recipients=user).order_by('-timestamp')
         return render(request, "mail/index.html", 
         {
             "emails": emails,
@@ -169,7 +169,7 @@ def email(request, mail_id):
 @login_required(login_url="login")
 def emails_sent(request):
     
-    emails = Email.objects.filter(sender=request.user, archived=False)
+    emails = Email.objects.filter(sender=request.user, archived=False).order_by('-timestamp')
 
 
     return render(request, "mail/sent_emails.html", {
