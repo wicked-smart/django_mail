@@ -3,3 +3,4 @@ fixtures/
 *.sqlite3
 .gitignore
 *.pyc
+__pycache__

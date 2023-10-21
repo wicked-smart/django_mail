@@ -3,3 +3,4 @@
 *.pyc
 media/
 fixtures/
+__pycache__
