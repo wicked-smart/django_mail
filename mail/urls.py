@@ -15,5 +15,6 @@ urlpatterns = [
     path('reply_all/<int:email_id>', views.reply_all, name="reply_all"),
     path('schedule_send/', views.schedule_send, name="schedule_send"),
     path('delete_email/<int:email_id>', views.delete_email, name="delete_email"),
-    path('archive/<int:email_id>', views.archive, name="archive")
+    path('archive/<int:email_id>', views.archive, name="archive"),
+    path('add', views.add, name="add")
 ]

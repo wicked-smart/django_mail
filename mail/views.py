@@ -619,6 +619,7 @@ def delete_email(request, email_id):
 
     email = Email.objects.get(pk=email_id)
     email.delete()
+    #messages.success(request, "Email Deleted successfully!")
     return HttpResponseRedirect(reverse("index"))
 
 
@@ -643,3 +644,8 @@ def archived_emails(request):
     return render(request, "mail/archived.html",{
         "emails": archives
     })
+
+
+def addd(request):
+    result = add.delay(23,89)
+    return HttpResponse(f"sum is := {result.get()}")

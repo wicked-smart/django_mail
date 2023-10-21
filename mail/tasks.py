@@ -3,6 +3,10 @@ from .models import *
 
 
 @shared_task
+def add(a,b):
+    return a+b
+
+@shared_task
 def send_email_at_scheduled_time(id, subject,reciepients, bcc,  body,  scheduled_time):
     try:
         sender = User.objects.get(pk=id)
