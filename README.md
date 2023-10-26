@@ -2,10 +2,33 @@
 A Lighweight Gmail like web-app that let users send and receive emails in thier inbox.
 
 ## Screenshot of pages
-<img src="images/inbox.png" alt="inbox" >
-<img src="images/compose.png" alt="compose" width="300px" height="400px">
-<img src="images/forward.png" alt="forward" width="300px" height="400px">
-<img src="images/scheduled-email.png" alt="scheduled-email" width="300px" height="400px">
+<div class="image-grid">
+    <div class="grid-item">
+        <img src="images/inbox.jpg" alt="Inbox">
+    </div>
+    <div class="grid-item">
+        <img src="images/inbox.jpg" alt="Image 2">
+    </div>
+    <div class="grid-item">
+        <img src="images/inbox.jpg" alt="Image 3">
+    </div>
+    <!-- Add more grid items as needed -->
+</div>
+
+<style>
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+.grid-item {
+    text-align: center;
+}
+img {
+    max-width: 100%;
+    height: auto;
+}
+</style>
 
 ## Tech stack used :
 * Django, Celery, Postgres (**Backend**)
