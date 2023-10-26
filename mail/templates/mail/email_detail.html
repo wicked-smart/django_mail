@@ -66,38 +66,38 @@
                     {{ email.body }}
                 </div>
             {% elif foo|slice:":5" == "Fwd: " %}
-            {{ forwarded_message|safe }}    
-
-
-
+                {{ forwarded_message|safe }}    
             {% else  %}
                 <div>
-                    {{ email.body | linebreaks }}
+                    {{ email.body }}
                 </div>
             {% endif %}
         {% endwith %}    
                 <!-- Display Attachments with Icons -->
+                <br><br>
         {% if email.attachments.all %}
-        <h2>Attachments</h2>
+        <h3>Attachments</h3>
         <ul class="d-flex flex-row justify-content-around">
-            {% for icon in icons %}
-            
-                <!-- Check the file extension and display corresponding icon -->
-                        {% if icon is 'pdf' %}
-                            <img src="{% static 'mail/icons/pdf-icon.png' %}" width="50px" height="50px" alt="PDF">
-                        {% elif icon is 'doc' %}
-                            <img src="{% static 'mail/icons/word-icon.png' %}" alt="Word">
-                        
-                        {% else %}
-                            <!-- If no specific icon, use a generic one -->
-                            <a href="#">
-                                <img src="{% static 'mail/icons/generic-icon.jpg' %}" width="150px" height="150px" alt="File">
-                            </a>
-                            
-                        {% endif %}
-                
-                
-            
+            {% for icon, relative_path  in icons_attachments %}
+
+                {% if icon == 'pdf' %}
+                    <div class="d-flex flex-column gap-3">
+                        <a href="{% static '' %}{{ relative_path }}" style="padding-bottom: 2px" download>
+                            <img src="{% static 'mail/icons/pdf-icon.png' %}" alt="pdf-file-icon" width="100px" height="100px">
+                        </a>
+                        <p>{{ relative_path|slice:"23:" }}</p>
+                    </div>
+                    
+                    
+                {% else %}
+                <div class="d-flex flex-column gap-2">
+                    <a href="{% static '' %}{{ relative_path }}" download>
+                        <img src="{% static 'mail/icons/generic-icon.jpg' %}" alt="generic-file-here" width="100px" height="100px">
+                    </a>
+                   
+                </div>
+                    
+                {% endif %}
             {% endfor %}
             </ul>
         {% endif %}

@@ -13,7 +13,7 @@ from .tasks import *
 from django.template.defaultfilters import linebreaksbr
 import re
 import json 
-from .utils import CustomJSONEncoder
+from .utils import * 
 from datetime import datetime, timedelta
 from celery.result import AsyncResult
 from django.contrib import messages
@@ -121,7 +121,7 @@ def email(request, mail_id):
     except KeyError:
         return HttpResponseRedirect(reverse('index'))
 
-    # Extract forward history
+    #Extract forward history
     email2 = email
     forward_history = []
     while email2:
@@ -137,18 +137,29 @@ def email(request, mail_id):
 
     print(forward_history)
     # Prepare the forwarded message
-    forwarded_message = ""
+    forwarded_text = []
+    
+    email3 = email
+    print("email3 body := ", email3.body)
+    print("forwarded from := ", email3.forwarded_from)
+    i=0
     for history in forward_history:
-        
-        forwarded_message += linebreaksbr(email.body)
+        timestamp = datetime.strftime(history.timestamp, "%Y-%m-%d %H:%M:%S")
+        forwarded_message = ""
+        if i == 0:
+            forwarded_message += linebreaksbr(email3.body)
         forwarded_message += f"<br>----------------Forwarded message------------<br>"
         forwarded_message += f"From: <b>{history.user.username}</b> &lt;{history.sender.email}&gt;<br>"
-        forwarded_message += f"Date: {history.timestamp}|date:'D, d M Y, H:i'<br>"
+        forwarded_message += f"Timestamp: {timestamp} <br>"
         forwarded_message += f"Subject: {history.subject}<br><br>"
         forwarded_message += f"{history.body} <br><br>"
-        
+        # email3 = history
+        i+=1
 
-        print(forwarded_message)
+        forwarded_text.append(forwarded_message)
+       
+    
+    print(forwarded_text)
     
     #prepare emails to display excluding bcc'd ones
     all_recipients = email.recipients_email_list()
@@ -157,13 +168,16 @@ def email(request, mail_id):
 
     attachments = email.attachments.all()
     icons = [attachment.file.name.split('.')[1] for attachment in attachments ]
+    files = [ 'mail/media/' + get_relative_path(attachment.file.path)[1:] for attachment in attachments]
+
+    icon_attachment_filepairs = zip(icons, files)
     return render(request, "mail/email_detail.html", {
         "email": email,
         "redirect_view_name": view_name,
         "forward_history": forward_history,
-        "forwarded_message": forwarded_message,
+        "forwarded_message": ''.join(forwarded_text),
         "recipients_to_display": recipients_to_display,
-        "icons": icons
+        "icons_attachments": icon_attachment_filepairs
     })
 
 @login_required(login_url="login")
@@ -293,18 +307,19 @@ def forward(request, email_id):
 
         print(forward_history)
         # Prepare the forwarded message
-        forwarded_message = ""
+        forwarded_message = "<br><br>##########"
+        i=0
         for history in forward_history:
-            
-            forwarded_message += linebreaksbr(email.body)
+            if i == 0:
+                forwarded_message += linebreaksbr(email.body)
             forwarded_message += f"<br>----------------Forwarded message------------<br>"
             forwarded_message += f"From: <b>{history.user.username}</b> &lt;{history.sender.email}&gt;<br>"
             forwarded_message += f"Date: {history.timestamp}|date:'D, d M Y, H:i'<br>"
             forwarded_message += f"Subject: {history.subject}<br><br>"
-            forwarded_message += f"{history.body} <br><br>"
-            
+            forwarded_message += f"{history.body} <br>"
+            i +=1 
 
-            print(forwarded_message)
+        print(forwarded_message)
 
 
         
@@ -320,10 +335,12 @@ def forward(request, email_id):
         subject = request.POST.get("subject")
         recipients = request.POST.get("recipients")
         body = request.POST.get("body") #error inserted
-
+        print("bodyyyy := ", body)
         x = re.sub("<[^<]+?>",'',body)
-        idx = x.find("----------------Forwarded message------------")
+        print("x:= ", x)
+        idx = x.find("##########")
         print(x)
+        print("idx := ", idx)
 
         x = x[:idx]
 

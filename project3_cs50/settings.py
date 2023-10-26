@@ -27,6 +27,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+IS_HEROKU_APP = "DYNO" in os.environ and not "CI" in os.environ
+if not IS_HEROKU_APP:
+    load_dotenv(BASE_DIR / '.env')
+
 SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",
     default=secrets.token_urlsafe(nbytes=64),
@@ -34,10 +38,9 @@ SECRET_KEY = os.environ.get(
 
 #testing
 
-IS_HEROKU_APP = "DYNO" in os.environ and not "CI" in os.environ
 
-if not IS_HEROKU_APP:
-    load_dotenv(BASE_DIR / '.env')
+
+
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -187,7 +190,7 @@ STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'static'
 
 MEDIA_URL = 'media/'
-MEDIA_ROOT = BASE_DIR / 'mail/media'
+MEDIA_ROOT = BASE_DIR / 'mail/static/mail/media'
 WHITENOISE_KEEP_ONLY_HASHED_FILES = True
 
 
