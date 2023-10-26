@@ -1,5 +1,5 @@
 # Mail Web-app 
-A Lighweight Gmail like web-app that let users send and receive emails in thier inbox.
+A Lightweight Gmail like web-app that let users send and receive emails in thier inbox.
 
 ## Screenshot of pages
 | ![inbox](images/inbox.png) | ![compose](images/compose.png) |
