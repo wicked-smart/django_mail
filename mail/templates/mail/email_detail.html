@@ -63,13 +63,13 @@
         {% with email.subject|slice:":5" as foo %}
             {% if  foo|slice:":4" == "Re: " %}
                 <div id="reply">
-                    {{ email.body }}
+                    {{ email.body|linebreaks }}
                 </div>
             {% elif foo|slice:":5" == "Fwd: " %}
-                {{ forwarded_message|safe }}    
+                {{ forwarded_message|safe|linebreaks }}    
             {% else  %}
                 <div>
-                    {{ email.body }}
+                    {{ email.body|linebreaks }}
                 </div>
             {% endif %}
         {% endwith %}    
@@ -89,12 +89,13 @@
                     </div>
                     
                     
+                    
                 {% else %}
                 <div class="d-flex flex-column gap-2">
-                    <a href="{% static '' %}{{ relative_path }}" download>
+                    <a href="{% static '' %}{{ relative_path }}" style="padding-bottom: 2px" download>
                         <img src="{% static 'mail/icons/generic-icon.jpg' %}" alt="generic-file-here" width="100px" height="100px">
                     </a>
-                   
+                    <p>{{ relative_path|slice:"23:" }}</p>
                 </div>
                     
                 {% endif %}

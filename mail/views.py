@@ -50,7 +50,8 @@ def register_view(request):
 
         print(f"username:= {username}")
         
-
+        if (first_name and not last_name) or (not first_name and last_name) or (not first_name and not last_name):
+            return render(request, "mail/register.html", {"name_error": "Both first and last name is required!!"})
 
         if password != confirmation:
             return render(request, "mail/register.html", {"confirmation_error": "password and confirmation does not match!!"})
@@ -66,6 +67,18 @@ def register_view(request):
             
 
             user.save()
+
+            #Welcome email
+            try:
+                sender = User.objects.get(username='admin')
+                welcome_email = Email.objects.create(user=sender, sender=sender)
+                welcome_email.subject = f"Welcome {user.first_name}" 
+                welcome_email.body = "Hi,\n\nWelcome to Gmail. Hope you have a nice and productive experience with this.\n\n please, feel free to use all of our features.\nSince our netwrok is still expanding, you may not find very many users on our platform yet! ( though we're catching up!! ;-) )  \n\nTo get started, start by sending mail to some of the users on our network like prem@gmail.com, preeti009@gmail.com etc.... \n\nadmin"
+                welcome_email.recipients.add(user)
+                welcome_email.save()
+            except Exception as e:
+                return render(request , "mail/register.html", {"admin_error": "could not send welcome email!"})
+
 
         except IntegrityError as e:
             return render(request, "mail/register.html", {"integrity_error": "User already exists! Try with different emailid..."})
@@ -210,7 +223,7 @@ def compose(request):
         bcc = request.POST.get("bcc")
         files = request.FILES.getlist("files")
 
-        print("files := ",files)
+        #print("body := ",body)
 
 
         if recipients == None or len(recipients) == 0: 
@@ -343,9 +356,6 @@ def forward(request, email_id):
         print("idx := ", idx)
 
         x = x[:idx]
-
-        
-
 
         #find valid list 
         valid_recipients = []
@@ -648,6 +658,7 @@ def archive(request, email_id):
     email = Email.objects.get(pk=email_id)
     email.archived = True
     email.save()
+    #messages.success(request, "Email archived successfully!")
     
     return HttpResponseRedirect(reverse("archived_emails"))
 

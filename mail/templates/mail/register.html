@@ -25,6 +25,9 @@
                   <input type="text"  name="last_name" class="form-control" placeholder="Last name" aria-label="Last name">
                 </div>
               </div>
+              {% if name_error %}
+                    <small id="confirmationErrorMessage" class="form-text"><span class="text-danger">{{ name_error }}</span></small>
+            {% endif %}
 
             <div class="form-group mb-3">
                 <label for="email" class="form-label">E-mail:-</label>
@@ -51,10 +54,12 @@
             </div>
 
             
-            <div class="d-grid col-12 text-center">
+            <div style="margin-left: 80px;" class="d-grid col-8 text-center">
               <button type="submit" class="btn btn-primary">Sign-up</button>
             </div>
-
+            {% if admin_error %}
+                 <small id="confirmationErrorMessage" style="margin-left: 90px;"  class="form-text"><span class="text-danger">{{ admin_error }}</span></small>
+            {% endif %}
             <div class="text-center mt-3">
                 Already signed up?
                 <a class="p-2" href="{% url 'login' %}">login</a>
