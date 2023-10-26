@@ -24,5 +24,14 @@ A Lighweight Gmail like web-app that let users send and receive emails in thier 
 ‌    * Features like archiving old emails, deleting an email and mark emails read
 
 
+# Future work
+
+    * Email thread UI having all the emails of a conversation in one page 
+    * ‌Refactor the code for performance improvements, mostly ORM queries
+‌    * Ability to star an email and save it as draft
+‌    * Making the web app mobile responsive
+‌    * Allow businesses to sign up and promote themselves  through promotions tab 
+
+
 
 
