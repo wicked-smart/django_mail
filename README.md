@@ -21,11 +21,11 @@ A Lighweight Gmail like web-app that let users send and receive emails in thier 
 * Schedule sending email at custom date and time using celery 
 * Forward emails to other users 
 * ‌UI showing the forward history of an email by adding a forwarded_from db field to Email model
-‌* **Reply** to an email  and it's recipient 
-‌* **Reply all**  to an email and it's forwarders and all recipients
+* **Reply** to an email  and it's recipient ‌
+* **Reply all**  to an email and it's forwarders and all recipients
 * ‌Both previous features made possible by adding thread_email , parent_email field in the db
-‌* Send multiple attachments with an email and UI showing all the downloadable attachments
-‌* Features like archiving old emails, deleting an email and mark emails read
+*  Send multiple attachments with an email and UI showing all the downloadable attachments
+* Features like archiving old emails, deleting an email and mark emails read
 
 
 ## Future work
