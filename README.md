@@ -4,9 +4,9 @@ A Lighweight Gmail like web-app that let users send and receive emails in thier 
 # Screenshot of pages
 
 # Tech stack used :
-    * Django, Celery, Postgres (Backend)
-    * Html, CSS, Bootstrap , jQuery (Frontend)
-    * Heorku (Deployment)
+* Django, Celery, Postgres (Backend)
+* Html, CSS, Bootstrap , jQuery (Frontend)
+* Heorku (Deployment)
 
 # Features
 
