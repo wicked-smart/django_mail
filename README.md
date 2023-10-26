@@ -13,4 +13,4 @@
 
 `` insert code here ``
 
-
+![Bike on a mountain images](./images/dharamsala-trip.jpg)
