@@ -2,8 +2,8 @@
 A Lighweight Gmail like web-app that let users send and receive emails in thier inbox.
 
 ## Screenshot of pages
-<img src="images/inbox.png" alt="inbox">
-<img src="images/compose.png" alt="compose" width="800px" height="400px">
+| <img src="images/inbox.png" alt="inbox"> | <img src="images/compose.png" alt="compose" width="800px" height="400px">
+| --| --| --| 
 <img src="images/forward.png" alt="forward">
 <img src="images/scheduled-email.png" alt="scheduled-email" >
 
