@@ -1,14 +1,14 @@
-## Mail Web-app 
+# Mail Web-app 
 A Lighweight Gmail like web-app that let users send and receive emails in thier inbox.
 
-# Screenshot of pages
+## Screenshot of pages
 
-# Tech stack used :
+## Tech stack used :
 * Django, Celery, Postgres (**Backend**)
 * Html, CSS, Bootstrap , jQuery (**Frontend**)
 * Heorku (**Deployment**)
 
-# Features
+## Features
 
 * Ability to sign up, login and logout
 * Welcome email on sign up containing information to get started 
@@ -24,7 +24,7 @@ A Lighweight Gmail like web-app that let users send and receive emails in thier 
 ‌* Features like archiving old emails, deleting an email and mark emails read
 
 
-# Future work
+## Future work
 
 * Email thread UI having all the emails of a conversation in one page 
 * ‌Refactor the code for performance improvements, mostly ORM queries
