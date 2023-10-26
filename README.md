@@ -5,6 +5,7 @@ A Lighweight Gmail like web-app that let users send and receive emails in thier 
 | ![inbox](images/inbox.png) | ![compose](images/compose.png) |
 | -- | -- |
 | ![forward](images/forward.png) | ![email_detail](images/email_detail.png)|
+| ![scheduled-email](images/scheduled-email.png) |
 
 ## Tech stack used :
 * Django, Celery, Postgres (**Backend**)
