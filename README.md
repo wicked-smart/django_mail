@@ -37,5 +37,12 @@ A Lighweight Gmail like web-app that let users send and receive emails in thier 
 *  Allow businesses to sign up and promote themselves  through promotions tab 
 
 
+## Table
+
+| prem | preeti |
+| -- | -- |
+| Prem Kumar | Preeti Kumari |
+| raghu dev | rawal pindi |
+
 
 
