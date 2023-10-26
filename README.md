@@ -13,4 +13,4 @@
 
 `` insert code here ``
 
-![Bike on a mountain images](./images/dharamsala-trip.jpg)
+<img src="images/dharamsala-trip.jpg" alt="drawing" width="200" height="300"/>
