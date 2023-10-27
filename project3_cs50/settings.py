@@ -193,7 +193,7 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'mail/static/mail/media'
 WHITENOISE_KEEP_ONLY_HASHED_FILES = True
 
-
+##
 STORAGES = {
     # Enable WhiteNoise's GZip and Brotli compression of static assets:
     # https://whitenoise.readthedocs.io/en/latest/django.html#add-compression-and-caching-support
