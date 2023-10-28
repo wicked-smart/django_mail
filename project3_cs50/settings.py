@@ -104,7 +104,7 @@ if IS_HEROKU_APP:
     # environment variable by the dj-database-url package. `DATABASE_URL` will be set
     # automatically by Heroku when a database addon is attached to your Heroku app. See:
     # https://devcenter.heroku.com/articles/provisioning-heroku-postgres
-    # https://github.com/jazzband/dj-database-url
+        # https://github.com/jazzband/dj-database-url
     DATABASE_URL = os.environ.get('DATABASE_URL')
     DATABASES = {
         "default": dj_database_url.config(
@@ -124,6 +124,7 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
+
 
 
 

@@ -1,6 +1,5 @@
 *.sqlite3
 .env
 *.pyc
-media/
 fixtures/
 __pycache__
