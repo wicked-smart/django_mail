@@ -4,6 +4,10 @@ A Lightweight Gmail like web-app that let users send and receive emails in thier
 ## Demo Video
 
 
+https://github.com/wicked-smart/django_mail/assets/46626672/d77c87dd-fe71-44cb-850e-c161153a7e95
+
+
+
 ## Tech stack used :
 * Django, Celery, Postgres (**Backend**)
 * Html, CSS, Bootstrap , jQuery (**Frontend**)
