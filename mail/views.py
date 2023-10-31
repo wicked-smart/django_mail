@@ -569,6 +569,10 @@ def schedule_send(request):
         body = request.POST.get("body")
         cc = request.POST.get("cc")
         bcc = request.POST.get("bcc")
+        files = request.FILES.getlist("files")
+
+        #print("body := ",body)
+        print("files scheduled to be sent := ", files)
 
 
 
@@ -615,6 +619,8 @@ def schedule_send(request):
                 
                 except:
                     pass
+            
+            
 
             #Store the scheduled emails in the db
             scheduleEmail = ScheduledEmail.objects.create(
@@ -624,6 +630,9 @@ def schedule_send(request):
                 body=body,
                 scheduled_datetime=scheduled_datetime
             )
+
+           
+            
 
             for recipient in valid_recipients:
                 scheduleEmail.recipients.add(recipient)
@@ -638,7 +647,7 @@ def schedule_send(request):
 
             #call tasks in tasks.py
             countdown = scheduled_datetime - datetime.now()
-            email_sent = send_email_at_scheduled_time.apply_async(args=[request.user.id, subject, valid_recipients_ids, valid_bcc_ids, body, scheduled_datetime], countdown=countdown.seconds)
+            email_sent = send_email_at_scheduled_time.apply_async(args=[request.user.id, subject, valid_recipients_ids, valid_bcc_ids, body, scheduled_datetime, files], countdown=countdown.seconds)
             messages.success(request, "Email Scheduled successfully!")
             return HttpResponseRedirect(reverse('index'))
 
