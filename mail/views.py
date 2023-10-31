@@ -224,6 +224,7 @@ def compose(request):
         files = request.FILES.getlist("files")
 
         #print("body := ",body)
+        print("files := ", files)
 
 
         if recipients == None or len(recipients) == 0: 
@@ -278,6 +279,7 @@ def compose(request):
             #add attachments 
             for file in files:
                 upload_file = UploadedFile(file=file)
+                print("updalod_file path on server := ", upload_file.file.path)
                 upload_file.save()
                 email.attachments.add(upload_file)
 
