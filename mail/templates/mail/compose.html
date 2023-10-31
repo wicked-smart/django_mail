@@ -107,7 +107,7 @@
                       </button>
                   </div>
                   <div class="modal-body">
-                      <form id="scheduleForm" method="post" action="{% url 'schedule_send' %}">
+                      <form id="scheduleForm" enctype="multipart/form-data" method="post" action="{% url 'schedule_send' %}">
                         {% csrf_token %}
                           <div class="form-group">
                               <label for="scheduleDate">Date:</label>
@@ -124,6 +124,7 @@
                           <input type="hidden" id="ScheduleBody" name="body" >
                           <input type="hidden" id="ScheduleCC" name="cc" >
                           <input type="hidden" id="ScheduleBCC" name="bcc" >
+                          <input type="file" name="files" >
                       </form>
                   </div>
                   <div class="modal-footer">
@@ -360,6 +361,7 @@ document.addEventListener('DOMContentLoaded', function(){
         var body = document.getElementById('body').value;
         var scheduleDate = document.getElementById('scheduleDate').value;
         var scheduleTime = document.getElementById('scheduleTime').value;
+        
 
         // Create an object to hold the data
         var data = {
@@ -367,7 +369,8 @@ document.addEventListener('DOMContentLoaded', function(){
             recipients: recipients,
             body: body,
             scheduleDate: scheduleDate,
-            scheduleTime: scheduleTime
+            scheduleTime: scheduleTime,
+            
         };
 
         console.log("data:= ", data)
@@ -377,6 +380,7 @@ document.addEventListener('DOMContentLoaded', function(){
         document.getElementById('ScheduleBody').value = body;
         document.getElementById('ScheduleCC').value = cc;
         document.getElementById('ScheduleBCC').value = bcc;
+        
 
         
         // Submit the schedule send form
