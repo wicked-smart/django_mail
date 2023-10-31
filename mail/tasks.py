@@ -7,7 +7,7 @@ def add(a,b):
     return a+b
 
 @shared_task
-def send_email_at_scheduled_time(id, subject,reciepients, bcc,  body,  scheduled_time, attachments=None):
+def send_email_at_scheduled_time(id, subject,reciepients, bcc,  body,  scheduled_time, attachment_paths=None):
     try:
         sender = User.objects.get(pk=id)
         email = Email.objects.create(user=sender, 
@@ -28,11 +28,16 @@ def send_email_at_scheduled_time(id, subject,reciepients, bcc,  body,  scheduled
             email.bcc.add(foobar)
 
         #add attachements 
-        for file in attachments:
-            upload_file = UploadedFile(file=file)
-            print("updalod_file path on server := ", upload_file.file.path)
-            upload_file.save()
-            email.attachments.add(upload_file)
+        files = UploadedFile.objects.all()
+        attachments = []
+        for file in files:
+            if file.file.path in attachment_paths:
+                attachments.append(file)
+        
+
+
+        for attachment in attachments:
+            email.attachments.add(attachment)
 
         email.save()
 

@@ -620,7 +620,13 @@ def schedule_send(request):
                 except:
                     pass
             
-            
+            #upload files and build serializable array of file paths
+            file_paths = []
+            for file in files:
+                upload_file = UploadedFile(file=file)
+                print("updalod_file path on server := ", upload_file.file.path)
+                upload_file.save()
+                file_paths.append(upload_file.file.path)
 
             #Store the scheduled emails in the db
             scheduleEmail = ScheduledEmail.objects.create(
@@ -647,7 +653,7 @@ def schedule_send(request):
 
             #call tasks in tasks.py
             countdown = scheduled_datetime - datetime.now()
-            email_sent = send_email_at_scheduled_time.apply_async(args=[request.user.id, subject, valid_recipients_ids, valid_bcc_ids, body, scheduled_datetime, files], countdown=countdown.seconds)
+            email_sent = send_email_at_scheduled_time.apply_async(args=[request.user.id, subject, valid_recipients_ids, valid_bcc_ids, body, scheduled_datetime, file_paths], countdown=countdown.seconds)
             messages.success(request, "Email Scheduled successfully!")
             return HttpResponseRedirect(reverse('index'))
 
